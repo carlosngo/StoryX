@@ -1,10 +1,10 @@
 # StoryX
 A Django web application that uses Stanford's Stanza and CoreNLP libraries to generate a screenplay document from a short story. 
 
-Garay, Kathleen Nicole
-Kang, Jude Evan
-Ngo, Carlos Miguel
-Villaroman, Ma. Patricia
+Garay, Kathleen Nicole <br/>
+Kang, Jude Evan <br/>
+Ngo, Carlos Miguel <br/>
+Villaroman, Ma. Patricia <br/>
 
 ## Pre-requisites
 1. Python 3.9.0
