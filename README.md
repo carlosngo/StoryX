@@ -11,11 +11,11 @@ Villaroman, Ma. Patricia <br/>
 Advised by Ryan Austin Fernandez <br/>
 
 ## Pre-requisites
-1. Python 3.9.0
+1. Python 3.7.9
 2. virtualenv
 
 ## How to run the project
-1. Create and activate a Python 3.9.0 virtual environment
+1. Create and activate a Python 3.7.9 virtual environment
 ```
 py -m venv env
 .\env\Scripts\activate
