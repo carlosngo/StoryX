@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Minimal Django File Upload Example</title>   
+    </head>
+    <body>
+    <!-- List of uploaded documents -->
+        <h1>Stories</h1>
+    {% if stories %}
+        <table>
+            <tr>
+                <th>Story Title</th>
+                <th>Story Author</th>
+                <th>Actions</th>
+            </tr>
+            
+        {% for story in stories %}
+            <tr>
+                <td>{{ story.title }}</td>
+                <td>{{ story.author }}</td>
+                <td>
+                    <a href="{{ story.text_file.url }}">View raw text</a>
+                    <a href="{{ story.text_file.url }}">Download generated screenplay</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <p>No stories uploaded.</p>
+    {% endif %}
+        <h1>Upload Story</h1>
+        <!-- Upload form. Note enctype attribute! -->
+        <form action="{% url 'stories' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table>
+            {% for field in form %}
+                <tr>
+                    <td>{{field.label_tag}}</td>
+                    <td>{{field}}</td>
+                    <td>
+                    {% for error in field.errors %}
+                        <div style="color: red">{{ error }}</div>
+                    {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+            <p><input type="submit" value="Upload" /></p>
+        </form>
+    </body>
+</html> 
