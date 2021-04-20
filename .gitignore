@@ -1,6 +1,7 @@
 corpus
 dltk
 env
+media
 __pycache__/
 *.py[cod]
 
