@@ -1,6 +1,5 @@
 from converter.models import Event, DialogueEvent
-from converter.pipeline.util import Util
-
+from converter.pipeline.spacy_util import SpacyUtil
 
 from spacy.matcher import Matcher
 
@@ -71,7 +70,7 @@ class DialogueExtractor:
                 # the end of the latest dialogue is the current index
                 arr[len(arr) - 1][1] = current_index
                 # if the "dialogue" does not end with punctuation, discard
-                if not Util.get_previous_token(self.doc[current_index]).is_punct:
+                if not SpacyUtil.get_previous_token(self.doc[current_index]).is_punct:
                     arr.pop()
                 # create new dialogue if there are more
                 if i < len(matches) - 1:
@@ -99,8 +98,8 @@ class DialogueExtractor:
         for i in range(len(arr)):
             first_token = self.doc[arr[i][0] + 1]
             last_token = self.doc[arr[i][1] - 1]
-            sentence_start = Util.get_sentence_index(first_token.sent)
-            sentence_end = Util.get_sentence_index(last_token.sent)
+            sentence_start = SpacyUtil.get_sentence_index(first_token.sent)
+            sentence_end = SpacyUtil.get_sentence_index(last_token.sent)
             event = Event(
                 sentence_start = sentence_start, 
                 sentence_end = sentence_end
@@ -118,7 +117,7 @@ class DialogueExtractor:
         for dialogue in self.dialogues:
             opening_quotes = self.doc[dialogue.content_start]
             closing_quotes = self.doc[dialogue.content_end - 1]
-            previous_token = Util.get_previous_token(opening_quotes)
+            previous_token = SpacyUtil.get_previous_token(opening_quotes)
             if (
                 previous_token is not None 
                 and (
@@ -126,11 +125,11 @@ class DialogueExtractor:
                     or previous_token.is_alpha
                 )
             ):
-                previous_word = Util.get_previous_word(opening_quotes)
+                previous_word = SpacyUtil.get_previous_word(opening_quotes)
                 while previous_word.pos_ != 'VERB' and previous_word.pos_ != 'AUX':
-                    previous_word = Util.get_previous_word(previous_word)
+                    previous_word = SpacyUtil.get_previous_word(previous_word)
                 speaker_verb = previous_word
-                speaker_noun = Util.get_subject(speaker_verb)
+                speaker_noun = SpacyUtil.get_subject(speaker_verb)
                 while speaker_noun is None:
                     while (
                         speaker_verb.head.pos_ != 'VERB' 
@@ -140,11 +139,11 @@ class DialogueExtractor:
                         speaker_verb = speaker_verb.head
                     
                     speaker_verb = speaker_verb.head
-                    speaker_noun = Util.get_subject(speaker_verb)
+                    speaker_noun = SpacyUtil.get_subject(speaker_verb)
                     if speaker_noun is None:
-                        speaker_noun = Util.get_object(speaker_verb)
+                        speaker_noun = SpacyUtil.get_object(speaker_verb)
 
-                speaker_noun_chunk = Util.get_noun_chunk(speaker_noun)
+                speaker_noun_chunk = SpacyUtil.get_noun_chunk(speaker_noun)
                 dialogue.event.actor_start = speaker_noun_chunk.start
                 dialogue.event.actor_end = speaker_noun_chunk.end
 
@@ -152,9 +151,9 @@ class DialogueExtractor:
         for i in range(len(self.dialogues) - 1, -1, -1) :
             dialogue = self.dialogues[i]
             closing_quotes = self.doc[dialogue.content_end - 1]
-            previous_token = Util.get_previous_token(closing_quotes)
+            previous_token = SpacyUtil.get_previous_token(closing_quotes)
             next_token = self.doc[closing_quotes.i + 1]
-            next_word = Util.get_next_word(closing_quotes)
+            next_word = SpacyUtil.get_next_word(closing_quotes)
 
             if (
                 dialogue.event.actor_start is None
@@ -172,14 +171,14 @@ class DialogueExtractor:
                 )
             ):
                 while next_word.pos_ != 'VERB' and next_word.pos_ != 'AUX':
-                    next_word = Util.get_next_word(next_word)
+                    next_word = SpacyUtil.get_next_word(next_word)
                 speaker_verb = next_word
-                speaker_noun = Util.get_subject(speaker_verb)
+                speaker_noun = SpacyUtil.get_subject(speaker_verb)
                 if speaker_noun is None:
-                    speaker_noun = Util.get_object(speaker_verb)
+                    speaker_noun = SpacyUtil.get_object(speaker_verb)
                 if speaker_noun is None and speaker_verb.head.pos_ == 'VERB':
-                    speaker_noun = Util.get_subject(speaker_verb.head)
-                speaker_noun_chunk = Util.get_noun_chunk(speaker_noun)
+                    speaker_noun = SpacyUtil.get_subject(speaker_verb.head)
+                speaker_noun_chunk = SpacyUtil.get_noun_chunk(speaker_noun)
                 dialogue.event.actor_start = speaker_noun_chunk.start
                 dialogue.event.actor_end = speaker_noun_chunk.end
 

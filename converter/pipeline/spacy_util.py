@@ -1,4 +1,4 @@
-class Util:
+class SpacyUtil:
     # gets the first non-whitespace and non-newline token before the given token 
     def get_previous_token(token):
         try:
@@ -51,7 +51,7 @@ class Util:
     def get_subject(anchor):
         for token in anchor.children:
             if token.dep_ == 'nsubj':
-                return Util.get_noun(token)
+                return SpacyUtil.get_noun(token)
         return None
 
     # sometimes, tokens with nsubj are not always nouns
@@ -95,5 +95,5 @@ class Util:
         for i in range(sent.start, sent.end):
             token = sent.doc[i]
             if token.dep_ == 'nsubj':
-                subjects.append(Util.get_noun(token))
+                subjects.append(SpacyUtil.get_noun(token))
         return subjects
