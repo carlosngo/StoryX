@@ -4,18 +4,28 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Home - StoryX</title>
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <title>StoryX Index</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cabin:700">
-    <link rel="stylesheet" href="assets/css/GFS%20Didot.css">
-    <link rel="stylesheet" href="assets/css/Jura.css">
-    <link rel="stylesheet" href="assets/css/sidebar.css">
-    <link rel="stylesheet" href="assets/css/untitled.css">
+    <link rel="stylesheet" href="{% static 'css/GFS%20Didot.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Jura.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/untitled.css' %}">
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="{% static 'js/grayscale.js' %}"></script>
+    <script src="{% static 'js/pdf.js' %}"></script>
+    <script src="{% static 'js/pdfViewer.js' %}"></script>
+    <script src="{% static 'js/Sidebar-Menu.js' %}"></script>
 </head>
 
 <body id="page-top">
-    <header class="masthead" style="background: url(&quot;assets/img/First%20Screen%20bw.png&quot;);background-repeat: no-repeat;background-size: cover;">
+    <header class="masthead indexBG">
         <div class="intro-body">
             <div class="container">
                 <div class="row">
@@ -26,6 +36,7 @@
                 <div class="row">
                     <div class="col-lg-8 mx-auto">
                         <div class="align-items-center" id="centerBox" style="margin: 30px 125px;padding: 10px;">
+                            <form method="post">
                             <div class="row">
                                 <div class="col"><label class="col-form-label float-left label" style="font-family: Jura, sans-serif;">Story Title</label></div>
                             </div>
@@ -40,23 +51,17 @@
                             </div>
                             <div class="row">
                                 <div class="col"><label class="col-form-label" style="padding: 40px 0px 0px 0px;font-family: Jura, sans-serif;">file name and path</label></div>
-                            </div><button class="btn" type="button">Upload Short Story File</button>
+                            </div><button class="btn" type="submit">Upload Short Story File</button>
+                            </form>
                         </div>
                     </div>
                 </div>
                 <div class="row" style="padding: 25px;">
-                    <div class="col-lg-8 mx-auto"><a href="main.html" class="btn" type="button">Generate Screenplay</a></div>
+                    <div class="col-lg-8 mx-auto"><a href="{ % url 'main' % }" method="post" class="btn" type="button">Generate Screenplay</a></div>
                 </div>
             </div>
         </div>
     </header>
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-    <script src="assets/js/grayscale.js"></script>
-    <script src="assets/js/pdf.js"></script>
-    <script src="assets/js/pdfViewer.js"></script>
-    <script src="assets/js/Sidebar-Menu.js"></script>
 </body>
 
 </html>
