@@ -4,14 +4,32 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>storyx frontend</title>
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <title>StoryX</title>
+    <!-- <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cabin:700">
     <link rel="stylesheet" href="assets/css/GFS%20Didot.css">
     <link rel="stylesheet" href="assets/css/Jura.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
-    <link rel="stylesheet" href="assets/css/untitled.css">
+    <link rel="stylesheet" href="assets/css/untitled.css"> -->
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cabin:700">
+    <link rel="stylesheet" href="{% static 'css/GFS%20Didot.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Jura.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/untitled.css' %}">
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="{% static 'js/grayscale.js' %}"></script>
+    <script src="{% static 'js/pdf.js' %}"></script>
+    <script src="{% static 'js/pdfViewer.js' %}"></script>
+    <script src="{% static 'js/Sidebar-Menu.js' %}"></script>
+
 </head>
 
 <body>
@@ -22,18 +40,23 @@
             </ul>
         </div>
     </div>
-    <div class="d-xl-flex align-items-xl-center" id="menu" style="padding: 20px;"><a href="index.html" class="btn menuButtons" id="newStoryButton" type="button">New Story</a><button class="btn menuButtons" id="pdfButton" type="button">Export to PDF</button><button class="btn menuButtons" id="latexButton" type="button">Export to Latex</button></div>
+    <div class="d-xl-flex align-items-xl-center" id="menu" style="padding: 20px;">
+        <a href="{ % url 'start' % }" class="btn menuButtons" id="newStoryButton" type="button">New Story</a>
+        <button class="btn menuButtons" id="pdfButton" type="button">Export to PDF</button>
+        <button class="btn menuButtons" id="latexButton" type="button">Export to Latex</button>
+    </div>
     <div id="page">
         <iframe src="assets/screenplay-template.pdf#toolbar=0&view=FitH" width="100%" height="100%" frameborder="0"></iframe>
     </div>
-    <div class="full-body" style="background: url(&quot;assets/img/black%20sand%201.png&quot;);"></div>
-    <script src="assets/js/jquery.min.js"></script>
+    <div class="full-body mainBG"></div>
+    <!-- <div class="full-body" style="background: url(&quot;assets/img/black%20sand%201.png&quot;);"></div> -->
+    <!--<script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
     <script src="assets/js/grayscale.js"></script>
     <script src="assets/js/pdf.js"></script>
     <script src="assets/js/pdfViewer.js"></script>
-    <script src="assets/js/Sidebar-Menu.js"></script>
+    <script src="assets/js/Sidebar-Menu.js"></script> -->
 </body>
 
 </html>
