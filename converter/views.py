@@ -1,3 +1,16 @@
+# from django.shortcuts import render, redirect, get_object_or_404
+# from django.http import HttpResponse
+# from django.conf import settings
+
+# from converter.models import Story
+# from converter.forms import StoryForm
+# from converter.pipeline.element_extractor import ElementExtractor
+# from converter.pipeline.annotation_helper import AnnotationHelper
+
+# import requests
+# import os
+# from django.views import generic
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.conf import settings
@@ -9,8 +22,6 @@ from converter.pipeline.annotation_helper import AnnotationHelper
 
 import requests
 import os
-from django.views import generic
-
 
 # Create your views here.
 
