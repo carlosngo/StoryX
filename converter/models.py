@@ -22,6 +22,14 @@ class Story(models.Model):
         upload_to=update_filename,
         null=True
     )
+    
+    def get_absolute_url(self):
+        """Returns the url to access a detail record for this story."""
+        return "/converter/stories/%s" % self.id
+
+    def get_annotation_url(self):
+        """Returns the url to access a detail record for this story."""
+        return "/converter/stories/%s/annotate" % self.id
 
 class Entity(models.Model):
     id = models.UUIDField(

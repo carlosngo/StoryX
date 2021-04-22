@@ -1,0 +1,11 @@
+.token:hover {
+    background-color: #FFFF00 !important;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.sentence:hover {
+    background-color: #FFFF00 !important;
+    cursor: pointer;
+    border-radius: 5px;
+}

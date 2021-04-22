@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>StoryX Annotator</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script
+            src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+            crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        {% load static %}
+        <script src="{% static 'js/annotate.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/annotate.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        
+    </head>
+    <body>
+        <div class="container">
+            
+            <div class="row">
+                <div class="col">
+                    <div class="sticky-top">
+                        <div>&nbsp;</div>
+                        <h2>{{ title }}</h2>
+                        <h4 class="pt-2 border-top border-dark">
+                            <i style="font-weight:normal;">
+                                Annotating  
+                                <span class="story-element">dialogues</span>
+                            </i>
+                        </h4>
+                        <h5>
+                            Instruction: 
+                            <span style="font-weight:normal;" id="instruction">An error occured. Please contact a system administrator.</span>
+                        </h5>
+                        <ul id="notes" class="mt-3">
+                            <li>After specifying all <span class="story-element">dialogues</span>, please click Generate Annotation and copy the output to a local file. Preferably, please name it {{ title | lower }}_<span class="story-element">dialogues</span>.txt. Afterwards, please click Proceed.</li>
+                        </ul>
+                        <div style="color:red">Warning: Refreshing or closing the page will result in data loss for this step.</div>
+                        <div class="mt-4"></div>
+                        <button type="button" class="btn btn-primary" id="btn-proceed"><i class="fa fa-share mr-2"></i>Proceed</button>
+                        <button type="button" class="btn btn-secondary" id="btn-annotate"><i class="fa fa-file-text-o mr-2"></i>Generate Annotation</button>
+                        <button type="button" class="btn btn-light" id="btn-undo"><i class="fa fa-undo mr-2"></i>Undo Selection</button>
+                        <div class="mt-4">
+                            <div class="d-flex justify-content-between">
+                                <h5>Output</h5>
+                                <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                            </div>
+                            
+                            <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col my-4">
+                    <div id="token-view">
+                    {% for token in tokens %}
+                        <span style="white-space: pre-line; font-size:18px;" class="token" data-idx="{{ forloop.counter0 }}">{{ token }}</span>
+                    {% endfor %}
+                    </div>
+
+                    <div id="sentence-view">
+                    {% for sentence in sentences %}
+                        <span style="white-space: pre-line; font-size:18px;" class="sentence" data-idx="{{ forloop.counter0 }}">{{ sentence }}</span>
+                    {% endfor %}
+                    </div>
+                        
+                </div>
+                
+            </div>
+        </div>
+
+        <form action="{% url 'stories' %}" method="get" id="form-finish">
+            {% csrf_token %}
+        </form>
+        
+    </body>
+</html>

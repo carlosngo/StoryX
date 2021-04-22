@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.conf import settings
 
 from converter.models import Story
 from converter.forms import StoryForm
 from converter.pipeline.element_extractor import ElementExtractor
+from converter.pipeline.annotation_helper import AnnotationHelper
 
 import requests
 import os
@@ -47,3 +48,16 @@ def main(request):
     return render(request, 'main.html')
 
 
+def annotate(request, id):
+    story = get_object_or_404(Story, id=id)
+
+    text = open(os.path.join(settings.MEDIA_ROOT, story.text_file.name), 'r').read()
+    
+    annotation_helper = AnnotationHelper()
+    annotation_helper.process(text)
+    
+    return render(request, 'annotate.html', {
+        'title': story.title,
+        'tokens': annotation_helper.tokens,
+        'sentences': annotation_helper.sentences,
+    })
