@@ -8,6 +8,7 @@ from converter.pipeline.element_extractor import ElementExtractor
 
 import requests
 import os
+from django.views import generic
 
 
 # Create your views here.
@@ -38,4 +39,11 @@ def stories(request):
     stories = Story.objects.all()
 
     return render(request, 'stories.html', {'stories': stories, 'form': form})
+
+def start(request):
+    return render(request, 'start.html')
+
+def main(request):
+    return render(request, 'main.html')
+
 
