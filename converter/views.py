@@ -58,7 +58,6 @@ def start(request):
 def main(request):
     return render(request, 'main.html')
 
-
 def annotate(request, id):
     story = get_object_or_404(Story, id=id)
 
