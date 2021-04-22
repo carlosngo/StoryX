@@ -39,3 +39,10 @@ def stories(request):
 
     return render(request, 'stories.html', {'stories': stories, 'form': form})
 
+class start(generic.ListView):
+    template_name = "start.html"
+
+class main(generic.ListView):
+    template_name = "main.html"
+
+
