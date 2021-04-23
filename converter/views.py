@@ -22,15 +22,15 @@ def stories(request):
         form = StoryForm(request.POST, request.FILES)
         if form.is_valid():
             story = form.save()
-            text = open(os.path.join(settings.MEDIA_ROOT, story.text_file.name), 'r').read()
+            # text = open(os.path.join(settings.MEDIA_ROOT, story.text_file.name), 'r').read()
             
-            URL = "http://localhost:8001/api/coref-clusters"
-            PARAMS = {'text':text}
-            res = requests.get(url = URL, params = PARAMS)
-            coref_json = res.json()
+            # URL = "http://localhost:8001/api/coref-clusters"
+            # PARAMS = {'text':text}
+            # res = requests.get(url = URL, params = PARAMS)
+            # coref_json = res.json()
 
-            element_extractor = ElementExtractor()
-            element_extractor.extract_elements(text, coref_json)
+            # element_extractor = ElementExtractor()
+            # element_extractor.extract_elements(text, coref_json)
 
             return redirect('/converter/stories/')
     else:
