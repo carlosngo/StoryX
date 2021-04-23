@@ -24,5 +24,10 @@ py -m venv env
 ```
 py -m pip install -r requirements.txt
 ```
-3. Run `py manage.py runserver`
-4. Open your browser and enter the URL localhost:8000
+3. Set up database
+```
+py manage.py makemigrations
+py manage.py migrate
+```
+4. Run `py manage.py runserver`
+5. Open your browser and enter the URL localhost:8000
