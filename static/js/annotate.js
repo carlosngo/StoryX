@@ -182,12 +182,15 @@ $(document).ready(() => {
 
     function undo() {
         if (instruction_idx == 0) {
-
-        } else if (element_idx < ACTION) {
-            // console.log('token')
-            var key = instruction_labels[element_idx][instruction_idx - 1]
-            // console.log(key)
-            var idx = currentObject[key]
+            currentObject = elements[element_idx].pop()
+            instruction_idx = instruction_labels[element_idx].length
+        } 
+        // console.log('token')
+        var key = instruction_labels[element_idx][instruction_idx - 1]
+        // console.log(key)
+        var idx = currentObject[key]
+        if (element_idx < ACTION) {
+            
             var query = ".token[data-idx='" + idx + "']";
             // console.log(query)
             var curElement = $(query)
@@ -212,6 +215,9 @@ $(document).ready(() => {
             var curElement = $(query)
             $(curElement).css('background-color', 'transparent')
         }
+
+        delete currentObject[key]
+
         previousInstruction()
         if (history.length == 0 && Object.keys(currentObject).length == 0) {
             $("#btn-undo").prop('disabled', true)
