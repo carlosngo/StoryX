@@ -4,6 +4,8 @@ from converter.models import Story
 from converter.pipeline.coref_resolver import CorefResolver
 from converter.pipeline.dialogue_extractor import DialogueExtractor
 from converter.pipeline.entity_extractor import EntityExtractor
+from converter.pipeline.action_extractor import ActionExtractor
+from converter.pipeline.spacy_util import SpacyUtil
 
 class ElementExtractor:
     def __init__(self):
@@ -13,8 +15,7 @@ class ElementExtractor:
         self.entities = []
 
     def extract_elements(self, text, data):
-        nlp = spacy.load("en_core_web_sm")
-        self.doc = nlp(text)
+        self.doc = SpacyUtil.nlp(text)
         coref_resolver = CorefResolver()
         coref_resolver.resolve_coreferences(self.doc, data)
         dialogue_extractor = DialogueExtractor()
@@ -22,6 +23,9 @@ class ElementExtractor:
         # dialogue_extractor.verify_dialogues()
         entity_extractor = EntityExtractor()
         entity_extractor.extract_entities(self.doc)
-        entity_extractor.verify_characters()
-        entity_extractor.verify_props()
+        # entity_extractor.verify_characters()
+        # entity_extractor.verify_props()
+        action_extractor = ActionExtractor()
+        action_extractor.parse_events(self.doc, dialogue_extractor.dialogues, entity_extractor.characters, entity_extractor.props)
+
         

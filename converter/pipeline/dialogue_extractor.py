@@ -46,8 +46,7 @@ class DialogueExtractor:
     def extract_content(self):
         arr = []
 
-        nlp = spacy.load("en_core_web_sm")
-        matcher = Matcher(nlp.vocab)
+        matcher = Matcher(SpacyUtil.nlp.vocab)
 
         pattern = [
             {"ORTH": '"'}

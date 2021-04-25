@@ -1,4 +1,8 @@
+import spacy
+
 class SpacyUtil:
+    nlp = spacy.load("en_core_web_sm")
+
     # gets the first non-whitespace and non-newline token before the given token 
     def get_previous_token(token):
         try:

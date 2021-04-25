@@ -16,10 +16,8 @@ class EntityExtractor:
         self.doc = doc
         self.characters = []
         self.props = []
-
-        nlp = spacy.load("en_core_web_sm")
         
-        matcher = DependencyMatcher(nlp.vocab)
+        matcher = DependencyMatcher(SpacyUtil.nlp.vocab)
 
         pattern = [
             {
