@@ -98,7 +98,7 @@ class DialogueExtractor:
             first_token = self.doc[arr[i][0] + 1]
             last_token = self.doc[arr[i][1] - 1]
             sentence_start = SpacyUtil.get_sentence_index(first_token.sent)
-            sentence_end = SpacyUtil.get_sentence_index(last_token.sent)
+            sentence_end = SpacyUtil.get_sentence_index(last_token.sent) + 1
             event = Event(
                 sentence_start = sentence_start, 
                 sentence_end = sentence_end

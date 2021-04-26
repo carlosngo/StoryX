@@ -32,6 +32,36 @@ def stories(request):
             element_extractor = ElementExtractor()
             element_extractor.extract_elements(text, coref_json)
 
+            characters = element_extractor.characters
+            props = element_extractor.props
+            events = element_extractor.events
+
+            # for character in characters:
+            #     entity = character.entity
+            #     entity.story = story
+            #     entity.save()
+            #     character.save()
+            
+            # for prop in props:
+            #     entity = prop.entity
+            #     entity.story = story
+            #     entity.save()
+            #     prop.save()
+
+            # for evt in events:
+            #     if type(evt) == ActionEvent:
+            #         event = evt.event
+            #     elif type(evt) == DialogueEvent:
+            #         event = evt.event
+            #     elif type(evt) == TransitionEvent:
+            #         event = evt.action_event.event
+            #     scene = event.scene
+            #     scene.story = story
+            #     scene.save()
+            #     event.save()
+            #     if type(evt) == TransitionEvent:
+            #         evt.action_event.save()
+            #     evt.save()
             return redirect('/converter/stories/')
     else:
         form = StoryForm()

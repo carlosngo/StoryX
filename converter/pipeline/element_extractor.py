@@ -10,9 +10,9 @@ from converter.pipeline.spacy_util import SpacyUtil
 class ElementExtractor:
     def __init__(self):
         self.doc = None
-        self.scenes = []
         self.events = []
-        self.entities = []
+        self.characters = []
+        self.props = []
 
     def extract_elements(self, text, data):
         self.doc = SpacyUtil.nlp(text)
@@ -27,5 +27,9 @@ class ElementExtractor:
         # entity_extractor.verify_props()
         action_extractor = ActionExtractor()
         action_extractor.parse_events(self.doc, dialogue_extractor.dialogues, entity_extractor.characters, entity_extractor.props)
+        # action_extractor.verify_scenes()
+        self.events = action_extractor.events
+        self.characters = action_extractor.characters
+        self.props = action_extractor.props
 
-        
+    
