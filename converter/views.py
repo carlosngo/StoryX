@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.conf import settings
 
-from converter.models import Story
+from converter.models import Story, Entity
 from converter.forms import StoryForm
 from converter.pipeline.element_extractor import ElementExtractor
 from converter.pipeline.annotation_helper import AnnotationHelper
@@ -30,12 +30,16 @@ def stories(request):
             coref_json = res.json()
 
             element_extractor = ElementExtractor()
-            element_extractor.extract_elements(text, coref_json)
+            element_extractor.extract_elements(story, text, coref_json)
+            element_extractor.verify_elements()
+            # characters = element_extractor.characters
+            # props = element_extractor.props
+            # events = element_extractor.events
 
-            characters = element_extractor.characters
-            props = element_extractor.props
-            events = element_extractor.events
-
+            
+            # for entity in list(Entity.objects.filter(story=story).order_by('reference_start')):
+            #     print(f'{entity.reference_start}, {entity.reference_end}')
+            
             # for character in characters:
             #     entity = character.entity
             #     entity.story = story

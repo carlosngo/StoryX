@@ -1,4 +1,4 @@
-from converter.models import Event, DialogueEvent
+from converter.models import Event, DialogueEvent, Character, Entity
 from converter.pipeline.spacy_util import SpacyUtil
 
 from spacy.matcher import Matcher
@@ -8,11 +8,15 @@ import spacy
 class DialogueExtractor:
     def __init__(self):
         self.doc = None
+        self.story = None
         self.dialogues = []
+        self.speakers = []
 
-    def extract_dialogue(self, doc):
+    def extract_dialogue(self, doc, story):
         self.doc = doc
+        self.story = story
         self.dialogues = []
+        self.speakers = []
         self.extract_content()
         self.extract_speakers()
         return self.dialogues
@@ -29,12 +33,16 @@ class DialogueExtractor:
     # prints the dialogue in a readable format
     def print_dialogue(self, dialogue):
         string = ''
-        if dialogue.event.actor_start is None:
+        if dialogue.event.characters.count() == 0:
             string = 'Unknown speaker: '
         else:
-            for i in range(dialogue.event.actor_start, dialogue.event.actor_end):
-                string = string + self.doc[i].text_with_ws
-            string = string.strip() + ': '
+            for character in dialogue.event.characters.all():
+                entity = character.entity
+                if entity.refers_to is not None:
+                    entity = entity.refers_to
+                for i in range(entity.reference_start, entity.reference_end):
+                    string = string + self.doc[i].text_with_ws
+                string = string.strip() + ': '
         for i in range(dialogue.content_start, dialogue.content_end):
             string = string + self.doc[i].text_with_ws
         print(string)
@@ -65,7 +73,7 @@ class DialogueExtractor:
         for i in range(0, len(matches)):
             current_index = matches[i][1]
             # if closing double quotes
-            if processed[i] is True or i is len(matches) - 1:
+            if processed[i] == True or i == len(matches) - 1:
                 # the end of the latest dialogue is the current index
                 arr[len(arr) - 1][1] = current_index
                 # if the "dialogue" does not end with punctuation, discard
@@ -108,6 +116,8 @@ class DialogueExtractor:
                 content_start = arr[i][0],
                 content_end = arr[i][1] + 1,
             )
+            event.save()
+            dialogue_event.save()
             self.dialogues.append(dialogue_event)
 
     def extract_speakers(self):
@@ -143,8 +153,19 @@ class DialogueExtractor:
                         speaker_noun = SpacyUtil.get_object(speaker_verb)
 
                 speaker_noun_chunk = SpacyUtil.get_noun_chunk(speaker_noun)
-                dialogue.event.actor_start = speaker_noun_chunk.start
-                dialogue.event.actor_end = speaker_noun_chunk.end
+                speaker = self.get_speaker(speaker_noun_chunk.start, speaker_noun_chunk.end)
+                if speaker is None:
+                    speaker = Character(entity = Entity(
+                        story = self.story,
+                        reference_start = speaker_noun_chunk.start,
+                        reference_end = speaker_noun_chunk.end
+                    ))
+                    speaker.entity.save()
+                    speaker.save()
+                    self.speakers.append(speaker)
+                dialogue.event.characters.add(speaker)
+                # dialogue.event.actor_start = speaker_noun_chunk.start
+                # dialogue.event.actor_end = speaker_noun_chunk.end
 
         # Second format
         for i in range(len(self.dialogues) - 1, -1, -1) :
@@ -153,9 +174,8 @@ class DialogueExtractor:
             previous_token = SpacyUtil.get_previous_token(closing_quotes)
             next_token = self.doc[closing_quotes.i + 1]
             next_word = SpacyUtil.get_next_word(closing_quotes)
-
             if (
-                dialogue.event.actor_start is None
+                dialogue.event.characters.count() == 0
                 and next_word is not None
                 and next_token.text.strip()
                 and (
@@ -178,8 +198,21 @@ class DialogueExtractor:
                 if speaker_noun is None and speaker_verb.head.pos_ == 'VERB':
                     speaker_noun = SpacyUtil.get_subject(speaker_verb.head)
                 speaker_noun_chunk = SpacyUtil.get_noun_chunk(speaker_noun)
-                dialogue.event.actor_start = speaker_noun_chunk.start
-                dialogue.event.actor_end = speaker_noun_chunk.end
+
+                speaker = self.get_speaker(speaker_noun_chunk.start, speaker_noun_chunk.end)
+                if speaker is None:
+                    # print(f'speaker {speaker_noun_chunk.start}, {speaker_noun_chunk.end} is not found')
+                    speaker = Character(entity = Entity(
+                        story = self.story,
+                        reference_start = speaker_noun_chunk.start,
+                        reference_end = speaker_noun_chunk.end
+                    ))
+                    speaker.entity.save()
+                    speaker.save()
+                    self.speakers.append(speaker)
+                dialogue.event.characters.add(speaker)
+                # dialogue.event.actor_start = speaker_noun_chunk.start
+                # dialogue.event.actor_end = speaker_noun_chunk.end
 
                 if i < len(self.dialogues) - 1:
                     next_dialogue = self.dialogues[i + 1]
@@ -192,48 +225,87 @@ class DialogueExtractor:
                         # if next_dialogue has no speaker yet
                         and next_dialogue.event.actor_start is None
                     ):
-                        next_dialogue.event.actor_start = speaker_noun_chunk.start
-                        next_dialogue.event.actor_end = speaker_noun_chunk.end
+                        next_dialogue.event.characters.add(speaker)
+                        # next_dialogue.event.actor_start = speaker_noun_chunk.start
+                        # next_dialogue.event.actor_end = speaker_noun_chunk.end
     
         # Third format
         for i in range(len(self.dialogues)):
             current_dialogue = self.dialogues[i]
-            if current_dialogue.event.actor_start is None:
+            if current_dialogue.event.characters.count() == 0:
                 previous_dialogue = self.dialogues[i - 1]
-                if i < len(dialogues) - 1:
+                if i < len(self.dialogues) - 1:
                     next_dialogue = self.dialogues[i + 1]
                 else:
                     next_dialogue = None
-                speaker_start = previous_dialogue.event.actor_start
-                speaker_end = previous_dialogue.event.actor_end
+                
+                for character in previous_dialogue.event.characters.all():
+                    speaker = character
+                # speaker_start = previous_dialogue.event.actor_start
+                # speaker_end = previous_dialogue.event.actor_end
 
                 # if next dialogue has no speaker, it's going to be alternate
-                if next_dialogue is None or next_dialogue.event.actor_start is None:
+                if next_dialogue is None or next_dialogue.event.characters.count() == 0:
                     listener_dialogue = self.dialogues[i - 2]
-                    listener_start = listener_dialogue.event.actor_start
-                    listener_end = listener_dialogue.event.actor_end
+                    for character in listener_dialogue.event.characters.all():
+                        listener = character
+                    # listener_start = listener_dialogue.event.actor_start
+                    # listener_end = listener_dialogue.event.actor_end
                     is_listener = True
                     for j in range(i, len(self.dialogues)):
-                        current_dialogue = self.dialogues[j]
+                        current_dialogZue = self.dialogues[j]
                         if current_dialogue.event.actor_start is not None:
                             break
-                        if is_listener is True:
-                            current_dialogue.event.actor_start = listener_start
-                            current_dialogue.event.actor_end = listener_end
+                        if is_listener == True:
+                            current_dialogue.event.characters.add(listener)
+                            # current_dialogue.event.actor_start = listener_start
+                            # current_dialogue.event.actor_end = listener_end
                         else:
-                            current_dialogue.event.actor_start = speaker_start
-                            current_dialogue.event.actor_end = speaker_end
+                            current_dialogue.event.characters.add(speaker)
+                            # current_dialogue.event.actor_start = speaker_start
+                            # current_dialogue.event.actor_end = speaker_end
                         is_listener = not is_listener
                 
                 # if next dialogue has a speaker
                 else:
                     # it's going to be the same speaker as the previous dialogue
-                    current_dialogue.event.actor_start = speaker_start
-                    current_dialogue.event.actor_end = speaker_end
+                    current_dialogue.event.characters.add(speaker)
+                    # current_dialogue.event.actor_start = speaker_start
+                    # current_dialogue.event.actor_end = speaker_end
+
+    def resolve_speakers(self, mention_entity_dict):
+        # length = len(self.speakers)
+        for referer in self.speakers:
+            # referer = self.speakers[i]
+            referer_start = referer.entity.reference_start
+            referer_end = referer.entity.reference_end
+            if (referer_start, referer_end) in mention_entity_dict:
+                speaker_start, speaker_end = mention_entity_dict[(referer_start, referer_end)]
+                speaker = self.get_speaker(speaker_start, speaker_end)
+                if speaker is None:
+                    speaker = Character(entity = Entity(
+                        story = self.story,
+                        reference_start = speaker_start,
+                        reference_end = speaker_end,
+                    ))
+                    speaker.entity.save()
+                    speaker.save()
+                    self.speakers.append(speaker)
+                # print(self.doc[referer_start:referer_end].text)
+                # print('refers to')
+                # print(self.doc[speaker_start:speaker_end].text)
+                referer.entity.refers_to = speaker.entity
+                referer.entity.save()
+                
+    def get_speaker(self, start, end):
+        for speaker in self.speakers:
+            if speaker.entity.reference_start == start and speaker.entity.reference_end == end:
+                return speaker
+        return None
 
     # verify extracted dialogues
     def verify_dialogues(self):
         print('EXTRACTED DIALOGUES: ' + str(len(self.dialogues)))
 
         for dialogue in self.dialogues:
-            self.print_dialogue(dialogue)    
+            self.print_dialogue(dialogue)

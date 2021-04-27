@@ -39,6 +39,12 @@ class Entity(models.Model):
     )
     story = models.ForeignKey(
         Story, 
+        on_delete=models.CASCADE,
+    )
+    refers_to = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
         on_delete=models.CASCADE
     )
     reference_start = models.IntegerField()
@@ -78,13 +84,13 @@ class Event(models.Model):
     )
     scene = models.ForeignKey(
         Scene, 
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
-    character = models.ManyToManyField(Character)
-    prop = models.ManyToManyField(Prop)
-    event_number = models.IntegerField()
-    actor_start = models.IntegerField()
-    actor_end = models.IntegerField()
+    characters = models.ManyToManyField(Character)
+    props = models.ManyToManyField(Prop)
+    event_number = models.IntegerField(blank=True, null=True)
     sentence_start = models.IntegerField()
     sentence_end = models.IntegerField()
 
@@ -103,8 +109,7 @@ class ActionEvent(models.Model):
         on_delete=models.CASCADE,
         primary_key=True,
     )
-    prop = models.ManyToManyField(Prop)
-    verb = models.IntegerField()
+    # verb = models.IntegerField()
 
 
 class TransitionEvent(models.Model):
