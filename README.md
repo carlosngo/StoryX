@@ -15,6 +15,24 @@ Advised by Ryan Austin Fernandez <br/>
 2. virtualenv
 
 ## How to run the project
+
+### Set up the API server
+1. Create and activate a Python 3.7.9 virtual environment
+```
+py -m venv env
+.\env\Scripts\activate
+```
+2. Install dependencies
+```
+py -m pip install -r requirements.txt
+```
+3. Download spaCy pre-trained models
+```
+py -m spacy download en_core_web_sm
+```
+4. Run `py manage.py runserver`
+
+### Set up the main server
 1. Create and activate a Python 3.7.9 virtual environment
 ```
 py -m venv env
