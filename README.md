@@ -24,10 +24,14 @@ py -m venv env
 ```
 py -m pip install -r requirements.txt
 ```
-3. Set up database
+3. Download spaCy pre-trained models
+```
+py -m spacy download en_core_web_sm
+```
+4. Set up database
 ```
 py manage.py makemigrations
 py manage.py migrate
 ```
-4. Run `py manage.py runserver`
-5. Open your browser and enter the URL localhost:8000
+5. Run `py manage.py runserver`
+6. Open your browser and enter the URL localhost:8000

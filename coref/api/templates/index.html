@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>NeuralCoref API Test</title>   
+    </head>
+    <body>
+        <form action="{% url 'coref-clusters' %}" method="get">
+            {% csrf_token %}
+            <textarea name='text'></textarea>
+            <p><input type="submit" value="Upload" /></p>
+        </form>
+    </body>
+</html> 
