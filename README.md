@@ -17,39 +17,41 @@ Advised by Ryan Austin Fernandez <br/>
 ## How to run the project
 
 ### Set up the API server
-1. Create and activate a Python 3.7.9 virtual environment
+1. Go to the `coref` directory using the command prompt
+2. Create and activate a Python 3.7.9 virtual environment
 ```
 py -m venv env
 .\env\Scripts\activate
 ```
-2. Install dependencies
+3. Install dependencies
 ```
 py -m pip install -r requirements.txt
 ```
-3. Download spaCy pre-trained models
+4. Download spaCy pre-trained models
 ```
 py -m spacy download en_core_web_sm
 ```
-4. Run `py manage.py runserver`
+5. Run `py manage.py runserver`
 
 ### Set up the main server
-1. Create and activate a Python 3.7.9 virtual environment
+1. Go to the `main` directory using the command prompt
+2. Create and activate a Python 3.7.9 virtual environment
 ```
 py -m venv env
 .\env\Scripts\activate
 ```
-2. Install dependencies
+3. Install dependencies
 ```
 py -m pip install -r requirements.txt
 ```
-3. Download spaCy pre-trained models
+4. Download spaCy pre-trained models
 ```
 py -m spacy download en_core_web_sm
 ```
-4. Set up database
+5. Set up database
 ```
 py manage.py makemigrations
 py manage.py migrate
 ```
-5. Run `py manage.py runserver`
-6. Open your browser and enter the URL localhost:8000
+6. Run `py manage.py runserver`
+7. Open your browser and enter the URL localhost:8000
