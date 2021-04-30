@@ -1,6 +1,15 @@
 
 class Evaluator:
     # dialogues is a list of dialogues, file is the file object from .read()
+    # Context:
+    # The file will have different formats, but generally the features are space-separated and one line is one entry:
+    # For dialogue, an entry is formatted as content_start content_end speaker_start speaker_end
+    # For characters and props, an entry is entity_start entity_end
+    # For action and transition events, an entry is sentence_index
+    # Read the file given the following formats, and create a list of tuples, and pass it to the count function as the annotation parameter
+    # With the list of story elements provided, also create a list of tuples following the same format above, and pass it to the count function as the prediction parameter
+
+
     def evaluate_dialogue_speaker(self, dialogues, file):
         for line in file:
             pass
