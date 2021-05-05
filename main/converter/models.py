@@ -32,6 +32,12 @@ class Story(models.Model):
     def get_screenplay_url(self):
         return "/converter/stories/%s/screenplay" % self.id
 
+    def get_pdf_url(self):
+        return "/converter/stories/%s/screenplay/pdf" % self.id
+
+    def get_txt_url(self):
+        return "/converter/stories/%s/txt" % self.id
+
     def get_filename(self):
         return os.path.splitext(os.path.basename(self.text_file.name))[0]
 

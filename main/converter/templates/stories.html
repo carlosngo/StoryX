@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Minimal Django File Upload Example</title>   
+        <title>StoryX Home</title>   
     </head>
     <body>
     <!-- List of uploaded documents -->
@@ -20,7 +20,7 @@
                 <td>{{ story.title }}</td>
                 <td>{{ story.author }}</td>
                 <td>
-                    <a href="{{ story.text_file.url }}">View raw text</a>
+                    <a href="{{ story.get_txt_url }}">View raw text</a>
                     <a href="{{ story.get_annotation_url }}">Annotate</a>
                     <a href="{{ story.get_screenplay_url }}">View screenplay</a>
                 </td>

@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from django.conf import settings
+from django.views.decorators.clickjacking import xframe_options_sameorigin
+from django.core.files import File
 
 from converter.models import Story, Entity
 from converter.forms import StoryForm
@@ -14,9 +16,6 @@ import os
 
 # Create your views here.
 
-def index(request):
-    return HttpResponse("Hello World!")
-
 def stories(request):
     # Handle file upload
     if request.method == 'POST':
@@ -24,7 +23,6 @@ def stories(request):
         if form.is_valid():
             story = form.save()
             text = story.text_file.open('r').read()
-            # open(os.path.join(settings.MEDIA_ROOT, story.text_file.name), 'r').read()
             
             URL = "http://localhost:8001/api/coref-clusters"
             PARAMS = {'text':text}
@@ -34,40 +32,6 @@ def stories(request):
             element_extractor = ElementExtractor()
             element_extractor.extract_elements(story, text, coref_json)
             element_extractor.verify_elements()
-            # characters = element_extractor.characters
-            # props = element_extractor.props
-            # events = element_extractor.events
-
-            
-            # for entity in list(Entity.objects.filter(story=story).order_by('reference_start')):
-            #     print(f'{entity.reference_start}, {entity.reference_end}')
-            
-            # for character in characters:
-            #     entity = character.entity
-            #     entity.story = story
-            #     entity.save()
-            #     character.save()
-            
-            # for prop in props:
-            #     entity = prop.entity
-            #     entity.story = story
-            #     entity.save()
-            #     prop.save()
-
-            # for evt in events:
-            #     if type(evt) == ActionEvent:
-            #         event = evt.event
-            #     elif type(evt) == DialogueEvent:
-            #         event = evt.event
-            #     elif type(evt) == TransitionEvent:
-            #         event = evt.action_event.event
-            #     scene = event.scene
-            #     scene.story = story
-            #     scene.save()
-            #     event.save()
-            #     if type(evt) == TransitionEvent:
-            #         evt.action_event.save()
-            #     evt.save()
             return redirect('/converter/stories/')
     else:
         form = StoryForm()
@@ -76,12 +40,15 @@ def stories(request):
 
     return render(request, 'stories.html', {'stories': stories, 'form': form})
 
+def story_txt(request, id):
+    story = get_object_or_404(Story, id=id)
+    return HttpResponse(story.text_file.open('rb'), content_type='text/plain')
+
 def annotate(request, id):
     story = get_object_or_404(Story, id=id)
 
     text = story.text_file.open('r').read()
-    # text = open(os.path.join(settings.MEDIA_ROOT, story.text_file.name), 'r').read()
-    
+
     annotation_helper = AnnotationHelper()
     annotation_helper.process(text)
     
@@ -96,11 +63,42 @@ def screenplay(request, id):
     story = get_object_or_404(Story, id=id)
 
     text = story.text_file.open('r').read()
-    # text = open(os.path.join(settings.MEDIA_ROOT, story.text_file.name), 'r').read()
-
+    
+    path_to_pdf = os.path.join(settings.SCREENPLAY_ROOT, story.get_filename() + '.pdf')
     screenplay_generator = ScreenplayGenerator(story, text)
     screenplay_generator.generate_screenplay()
+    # if there is no pdf file yet, generate one
+    # if not os.path.isfile(path_to_pdf): 
+    #     screenplay_generator = ScreenplayGenerator(story, text)
+    #     screenplay_generator.generate_screenplay()
 
-    return render(request, 'index.html')
+    return render(request, 'screenplay.html', {
+        'story_id': story.id, 
+        'pdf_url': story.get_pdf_url() + '#toolbar=0&view=FitH'
+    })
+
+def screenplay_pdf_download(request, id):
+    story = get_object_or_404(Story, id=id)
+    path_to_pdf = os.path.join(settings.SCREENPLAY_ROOT, story.get_filename() + '.pdf')
+    with open(path_to_pdf, 'rb') as pdf_file:
+        response = HttpResponse(pdf_file.read(), content_type="application/pdf")
+        response['Content-Disposition'] = 'attachment; filename=' + story.get_filename() + '.pdf'
+        return response
+
+def screenplay_tex_download(request, id):
+    story = get_object_or_404(Story, id=id)
+    path_to_tex = os.path.join(settings.SCREENPLAY_ROOT, story.get_filename() + '.tex')
+    with open(path_to_tex, 'rb') as tex_file:
+        response = HttpResponse(tex_file.read(), content_type="application/tex")
+        response['Content-Disposition'] = 'attachment; filename=' + story.get_filename() + '.tex'
+        return response
+    
+@xframe_options_sameorigin
+def screenplay_pdf(request, id):
+    story = get_object_or_404(Story, id=id)
+    path_to_pdf = os.path.join(settings.SCREENPLAY_ROOT, story.get_filename() + '.pdf')
+    return FileResponse(open(path_to_pdf, 'rb'), content_type='application/pdf')
+
+
 
 
