@@ -22,7 +22,7 @@
                 <td>
                     <a href="{{ story.text_file.url }}">View raw text</a>
                     <a href="{{ story.get_annotation_url }}">Annotate</a>
-                    <a href="{{ story.text_file.url }}">Download generated screenplay</a>
+                    <a href="{{ story.get_screenplay_url }}">View screenplay</a>
                 </td>
             </tr>
         {% endfor %}

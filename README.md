@@ -1,5 +1,5 @@
 # StoryX
-A Django web application that uses Stanford's Stanza and CoreNLP libraries to generate a screenplay document from a short story. 
+A Django web application that uses spaCy NLP libraries to generate a screenplay document from a short story. 
 
 Written for a thesis in partial fulfillment of the requirements for the degree of Bachelor of Science in Computer Science by <br/>
 

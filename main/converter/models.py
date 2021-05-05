@@ -24,12 +24,16 @@ class Story(models.Model):
     )
     
     def get_absolute_url(self):
-        """Returns the url to access a detail record for this story."""
         return "/converter/stories/%s" % self.id
 
     def get_annotation_url(self):
-        """Returns the url to access a detail record for this story."""
         return "/converter/stories/%s/annotate" % self.id
+
+    def get_screenplay_url(self):
+        return "/converter/stories/%s/screenplay" % self.id
+
+    def get_filename(self):
+        return os.path.splitext(os.path.basename(self.text_file.name))[0]
 
 class Entity(models.Model):
     id = models.UUIDField(

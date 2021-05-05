@@ -1,61 +1,106 @@
+from pdflatex import PDFLaTeX
+from converter.pipeline.spacy_util import SpacyUtil
+from django.conf import settings
+
+import os
+import subprocess
+
+
 class ScreenplayGenerator:
-    def __init__(self, doc, title, author, scenes):
-        self.doc = doc
-        self.title = title
-        self.author = author
-        self.scenes = scenes
+    def __init__(self, story, text):
+        self.doc = SpacyUtil.nlp(text)
+        self.sent_list = list(self.doc.sents)
+        self.story = story
+        self.tex_str = ''
 
     def generate_screenplay(self):
-        story_str = '\\documentclass{screenplay}'
-        story_str += self.tex_meta()
-        story_str += '\\begin{document}\n\coverpage\n'
-        story_str += self.tex_body()
-        story_str += '\n\\theend\n\\end{document}'
-        return story_str
+        self.generate_tex()
+        self.generate_pdf()
 
-    def tex_meta(self):
-        return "\\title{{{}}}\n\\author{{{}}}\n".format(self.title, self.author)
+    def generate_tex(self):
+        self.tex_str = '\\documentclass{screenplay}'
+        self.tex_str += self.generate_tex_meta()
+        self.tex_str += '\\begin{document}\n\coverpage\n'
+        self.tex_str += self.generate_tex_body()
+        self.tex_str += '\n\\theend\n\\end{document}'
+        
+        print(self.tex_str)
+    
+        with open(os.path.join(settings.SCREENPLAY_ROOT, self.story.get_filename() + '.tex'), 'w') as f:
+            f.write(self.tex_str)
 
-    def tex_body(self):
+    def generate_tex_meta(self):
+        return "\\title{{{}}}\n\n\\author{{{}}}\n".format(self.story.title, self.story.author)
+
+    def generate_tex_body(self):
         str_body = ''
-        for scene in scenes:
-            scene_header = "Scene {}\n\n".format(scene.number)
+        for scene in self.story.scene_set.all().order_by('scene_number'):
+            scene_header = "\n\nScene {}\n\n".format(scene.scene_number)
             str_body += scene_header
-            for event in scene.events:
-                if event.type == EVENT_TRANSITION:
-                    str_body += tex_transition
-                elif event.type == EVENT_ACTION:
-                    str_body += tex_action
-                elif event.type == EVENT_DIALOGUE:
-                    str_body += tex_dialogue
-                str_body+= '\n'
+            for event in scene.event_set.all().order_by('event_number'):
+                if hasattr(event, 'dialogueevent'):
+                    str_body += self.generate_tex_dialogue(event)
+                elif hasattr(event, 'actionevent'):
+                    str_body += self.generate_tex_action(event)
+                else:
+                    str_body += self.generate_tex_transition(event)
         return str_body
 
-    def tex_transition(self, transition_event):
+    def generate_tex_transition(self, transition_event):
         action = ''
-        for i in transition_event.content_range:
-            action = action + self.doc[i].text_with_ws
-        return action
+        start = transition_event.sentence_start
 
-    def tex_action(self, action_event):
+        for token in self.sent_list[start]:
+            action = action + token.text_with_ws
+        newaction = action[:1].upper() + action[1:]
+        return newaction
+
+    def generate_tex_action(self, action_event):
         action = ''
-        for i in action_event.content_range:
-            action = action + self.doc[i].text_with_ws
-        return action
+        start = action_event.sentence_start
+
+        for token in self.sent_list[start]:
+            action = action + token.text_with_ws
+        newaction = action[:1].upper() + action[1:]
+        return newaction
 
     # REFERENCE
     # \begin{dialogue}{April}
-    #     Okay, okay, don't panic.
+    #         Okay, okay, don't panic.
     # \end{dialogue}
-    def tex_dialogue(self, dialogue_event):
+
+
+    def generate_tex_dialogue(self, dialogue_event):
         character = ''
-        if dialogue_event.actor is None:
-            character = 'Unknown speaker'
+        if dialogue_event.characters.count() == 0:
+            string = 'Unknown speaker: '
         else:
-            for i in dialogue_event.actor:
-                character = character + self.doc[i].text_with_ws
-        dialogue = ''
-        for i in dialogue_event.content_range:
-            dialogue = dialogue + self.doc[i].text_with_ws
-        tex = "\\begin{{dialogue}}{{{}}}\n\t{}\n\\end{{dialogue}}\n".format(character, dialogue)
+            for speaker in dialogue_event.characters.all():
+                entity = speaker.entity
+                if entity.refers_to is not None:
+                    entity = entity.refers_to
+                for i in range(entity.reference_start, entity.reference_end):
+                    character = character + self.doc[i].text_with_ws
+            character = character.strip()
+        dialogue_str = ''
+        for i in range(dialogue_event.dialogueevent.content_start, dialogue_event.dialogueevent.content_end):
+            dialogue_str = dialogue_str + self.doc[i].text_with_ws
+        dialogue_str = dialogue_str.strip()[1:-1].replace("\n", " ")
+        if dialogue_str[-1] == ',':
+            dialogue_str = dialogue_str[:-1] + '.'
+
+        tex = "\n\n\\begin{{dialogue}}{{{}}}\n\t{}\n\\end{{dialogue}}\n\n".format(character, dialogue_str)
         return tex
+
+
+    def generate_pdf(self):
+        path_to_tex = os.path.join(settings.SCREENPLAY_ROOT, self.story.get_filename() + '.tex')
+        # cmd = ['pdflatex', '-interaction', 'nonstopmode', path_to_tex]
+        # proc = subprocess.Popen(cmd)
+        # proc.communicate()
+        pdfl = PDFLaTeX.from_texfile(path_to_tex)
+
+        pdf, log, completed_process = pdfl.create_pdf()
+        with open(os.path.join(settings.SCREENPLAY_ROOT, self.story.get_filename() + '.pdf'), 'wb') as f:
+            f.write(pdf)
+

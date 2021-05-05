@@ -31,6 +31,10 @@ ALLOWED_HOSTS = []
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+STORY_ROOT = os.path.join(MEDIA_ROOT, 'stories')
+
+SCREENPLAY_ROOT = os.path.join(MEDIA_ROOT, 'screenplays')
+
 # Application definition
 
 INSTALLED_APPS = [

@@ -98,7 +98,7 @@ class ActionExtractor:
         
         return ActionEvent(event=event)
 
-    def parse_events(self, doc, story, dialogue_events, character_list, prop_list):
+    def extract_events(self, doc, story, dialogue_events, character_list, prop_list):
         self.scene_counter = 1
         self.d_idx = 0
         self.seq = -1

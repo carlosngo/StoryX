@@ -6,6 +6,7 @@ from converter.models import Story, Entity
 from converter.forms import StoryForm
 from converter.pipeline.element_extractor import ElementExtractor
 from converter.pipeline.annotation_helper import AnnotationHelper
+from converter.pipeline.screenplay_generator import ScreenplayGenerator
 
 import requests
 import os
@@ -22,7 +23,8 @@ def stories(request):
         form = StoryForm(request.POST, request.FILES)
         if form.is_valid():
             story = form.save()
-            text = open(os.path.join(settings.MEDIA_ROOT, story.text_file.name), 'r').read()
+            text = story.text_file.open('r').read()
+            # open(os.path.join(settings.MEDIA_ROOT, story.text_file.name), 'r').read()
             
             URL = "http://localhost:8001/api/coref-clusters"
             PARAMS = {'text':text}
@@ -77,7 +79,8 @@ def stories(request):
 def annotate(request, id):
     story = get_object_or_404(Story, id=id)
 
-    text = open(os.path.join(settings.MEDIA_ROOT, story.text_file.name), 'r').read()
+    text = story.text_file.open('r').read()
+    # text = open(os.path.join(settings.MEDIA_ROOT, story.text_file.name), 'r').read()
     
     annotation_helper = AnnotationHelper()
     annotation_helper.process(text)
@@ -87,3 +90,17 @@ def annotate(request, id):
         'tokens': annotation_helper.tokens,
         'sentences': annotation_helper.sentences,
     })
+
+
+def screenplay(request, id):
+    story = get_object_or_404(Story, id=id)
+
+    text = story.text_file.open('r').read()
+    # text = open(os.path.join(settings.MEDIA_ROOT, story.text_file.name), 'r').read()
+
+    screenplay_generator = ScreenplayGenerator(story, text)
+    screenplay_generator.generate_screenplay()
+
+    return render(request, 'index.html')
+
+

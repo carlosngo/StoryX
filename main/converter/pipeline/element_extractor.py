@@ -37,7 +37,7 @@ class ElementExtractor:
         # entity_extractor.verify_props()
 
         action_extractor = ActionExtractor()
-        action_extractor.parse_events(self.doc, self.story, dialogue_extractor.dialogues, entity_extractor.characters, entity_extractor.props)
+        action_extractor.extract_events(self.doc, self.story, dialogue_extractor.dialogues, entity_extractor.characters, entity_extractor.props)
         # action_extractor.verify_events()
         # self.events = action_extractor.events
         # self.characters = action_extractor.characters
@@ -50,7 +50,7 @@ class ElementExtractor:
             character = self.main_characters[i]
             print(self.doc[character.reference_start:character.reference_end].text)
         sents = list(self.doc.sents)
-        for scene in list(Scene.objects.filter(story=self.story).order_by('scene_number')):
+        for scene in self.story.scene_set.all().order_by('scene_number'):
             print(f'scene { scene.scene_number }:')
             for event in scene.event_set.all().order_by('event_number'):
                 if hasattr(event, 'dialogueevent'):

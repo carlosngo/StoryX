@@ -49,6 +49,11 @@ class DialogueExtractor:
         # self.print_event(dialogue)
 
 
+    def get_speaker(self, start, end):
+        for speaker in self.speakers:
+            if speaker.entity.reference_start == start and speaker.entity.reference_end == end:
+                return speaker
+        return None
     # HELPER FUNCTIONS END
 
     def extract_content(self):
@@ -297,11 +302,6 @@ class DialogueExtractor:
                 referer.entity.refers_to = speaker.entity
                 referer.entity.save()
                 
-    def get_speaker(self, start, end):
-        for speaker in self.speakers:
-            if speaker.entity.reference_start == start and speaker.entity.reference_end == end:
-                return speaker
-        return None
 
     # verify extracted dialogues
     def verify_dialogues(self):
