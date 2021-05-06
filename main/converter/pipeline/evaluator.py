@@ -11,23 +11,101 @@ class Evaluator:
 
 
     def evaluate_dialogue_speaker(self, dialogues, file):
+        prediction = []
+        annotation = []
+
+        for d in dialogues:
+            tPrd = (d.speaker_start, d.speaker_end)
+            prediction.append(tPrd)
+
         for line in file:
-            pass
+            line.strip()
+            sAnn = line.split(" ")
+            tAnn = (int(sAnn[2]), int(sAnn[3]))
+            annotation.append(tAnn)
+            
+        tp, fp, fn = count(prediction, annotation)
         return evaluate(tp, fp, fn)
     
     def evaluate_dialogue_content(self, dialogues, file):
+        prediction = []
+        annotation = []
+
+        for d in dialogues:
+            tPrd = (d.content_start, d.content_end)
+            prediction.append(tPrd)
+
+        for line in file:
+            line.strip()
+            sAnn = line.split(" ")
+            tAnn = (int(sAnn[0]), int(sAnn[1]))
+            annotation.append(tAnn)
+
+        tp, fp, fn = count(prediction, annotation)
         return evaluate(tp, fp, fn)
 
     def evaluate_characters(self, characters, file):
+        prediction = []
+        annotation = []
+
+        for c in characters:
+            tPrd = (c.entity_start, c.entity_end)
+            prediction.append(tPrd)
+
+        for line in file:
+            line.strip()
+            sAnn = line.split(" ")
+            tAnn = (int(sAnn[0]), int(sAnn[1]))
+            annotation.append(tAnn)
+
+        tp, fp, fn = count(prediction, annotation)
         return evaluate(tp, fp, fn)
     
     def evaluate_props(self, props, file):
+        prediction = []
+        annotation = []
+
+        for p in props:
+            tPrd = (p.entity_start, p.entity_end)
+            prediction.append(tPrd)
+
+        for line in file:
+            line.strip()
+            sAnn = line.split(" ")
+            tAnn = (int(sAnn[0]), int(sAnn[1]))
+            annotation.append(tAnn)
+
+        tp, fp, fn = count(prediction, annotation)
         return evaluate(tp, fp, fn)
     
-    def evaluate_actions(self):
+    def evaluate_actions(self, actions, file):
+        prediction = []
+        annotation = []
+
+        for a in actions:
+            tPrd = (a.sentence_index)
+            prediction.append(tPrd)
+
+        for line in file:
+            tAnn = (int(line.strip()))
+            annotation.append(tAnn)
+
+        tp, fp, fn = count(prediction, annotation)
         return evaluate(tp, fp, fn)
 
-    def evaluate_transitions(self):
+    def evaluate_transitions(self, transitions, file):
+        prediction = []
+        annotation = []
+
+        for t in transitions:
+            tPrd = (t.sentence_index)
+            prediction.append(tPrd)
+
+        for line in file:
+            tAnn = (int(line.strip()))
+            annotation.append(tAnn)
+
+        tp, fp, fn = count(prediction, annotation)
         return evaluate(tp, fp, fn)
     
     def count(self, prediction, annotation):
