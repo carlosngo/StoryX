@@ -228,7 +228,7 @@ class DialogueExtractor:
                         # if the next dialogue is not preceded by a newline
                         and self.doc[next_dialogue.content_start - 1].text.strip()
                         # if next_dialogue has no speaker yet
-                        and next_dialogue.event.actor_start is None
+                        and next_dialogue.event.characters.count() == 0
                     ):
                         next_dialogue.event.characters.add(speaker)
                         # next_dialogue.event.actor_start = speaker_noun_chunk.start
@@ -259,7 +259,7 @@ class DialogueExtractor:
                     is_listener = True
                     for j in range(i, len(self.dialogues)):
                         current_dialogZue = self.dialogues[j]
-                        if current_dialogue.event.actor_start is not None:
+                        if current_dialogue.event.characters.count() == 0:
                             break
                         if is_listener == True:
                             current_dialogue.event.characters.add(listener)
