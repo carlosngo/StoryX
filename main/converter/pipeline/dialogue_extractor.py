@@ -143,15 +143,17 @@ class DialogueExtractor:
                 while previous_word.pos_ != 'VERB' and previous_word.pos_ != 'AUX':
                     previous_word = SpacyUtil.get_previous_word(previous_word)
                 speaker_verb = previous_word
+                print(speaker_verb.text)
                 speaker_noun = SpacyUtil.get_subject(speaker_verb)
+                print(self.doc[dialogue.content_start:dialogue.content_end].text)
                 while speaker_noun is None:
                     while (
                         speaker_verb.head.pos_ != 'VERB' 
                         and speaker_verb.head.pos_ != 'AUX'
-                        and speaker_verb.head == speaker_verb
                     ):
+                        print(speaker_verb.head.text)
                         speaker_verb = speaker_verb.head
-                    
+                    print(speaker_verb.text)
                     speaker_verb = speaker_verb.head
                     speaker_noun = SpacyUtil.get_subject(speaker_verb)
                     if speaker_noun is None:
@@ -194,16 +196,37 @@ class DialogueExtractor:
                     or previous_token.text.strip()
                 )
             ):
+                # if previous_token.text != ',' and previous_token.is_punct:
+                #     dialogue.event.sentence_end = dialogue.event.sentence_end + 1
+                #     dialogue.event.save()
                 while next_word.pos_ != 'VERB' and next_word.pos_ != 'AUX':
                     next_word = SpacyUtil.get_next_word(next_word)
                 speaker_verb = next_word
-                speaker_noun = SpacyUtil.get_subject(speaker_verb)
-                if speaker_noun is None:
-                    speaker_noun = SpacyUtil.get_object(speaker_verb)
+                subject = SpacyUtil.get_subject(speaker_verb)
+                dobj = SpacyUtil.get_object(speaker_verb)
+                
+                # if subject is not None:
+                #      print(f'subject = {subject.text}, subject.idx = {subject.i}, content_start = {dialogue.content_start}, content_end = {dialogue.content_end}')
+                if subject is None:
+                    speaker_noun = dobj
+                elif dobj is None:
+                    speaker_noun = subject
+                elif subject.i in range(dialogue.content_start, dialogue.content_end):
+                    speaker_noun = dobj
+                elif dobj.i in range(dialogue.content_start, dialogue.content_end):
+                    speaker_noun = subject
+                elif subject is not None:
+                    speaker_noun = subject
+                elif dobj is not None:
+                    speaker_noun = dobj
+                else:
+                    speaker_noun = None
+
                 if speaker_noun is None and speaker_verb.head.pos_ == 'VERB':
                     speaker_noun = SpacyUtil.get_subject(speaker_verb.head)
+                # print(self.doc[dialogue.content_start:dialogue.content_end])
                 speaker_noun_chunk = SpacyUtil.get_noun_chunk(speaker_noun)
-
+                
                 speaker = self.get_speaker(speaker_noun_chunk.start, speaker_noun_chunk.end)
                 if speaker is None:
                     # print(f'speaker {speaker_noun_chunk.start}, {speaker_noun_chunk.end} is not found')
@@ -284,7 +307,7 @@ class DialogueExtractor:
             # referer = self.speakers[i]
             referer_start = referer.entity.reference_start
             referer_end = referer.entity.reference_end
-            if (referer_start, referer_end) in mention_entity_dict:
+            if self.doc[referer_end - 1].pos_ == 'PRON' and (referer_start, referer_end) in mention_entity_dict:
                 speaker_start, speaker_end = mention_entity_dict[(referer_start, referer_end)]
                 speaker = self.get_speaker(speaker_start, speaker_end)
                 if speaker is None:

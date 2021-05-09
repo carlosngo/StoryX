@@ -31,7 +31,7 @@ def stories(request):
 
             element_extractor = ElementExtractor()
             element_extractor.extract_elements(story, text, coref_json)
-            element_extractor.verify_elements()
+            # element_extractor.verify_elements()
             return redirect('/converter/stories/')
     else:
         form = StoryForm()

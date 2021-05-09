@@ -53,23 +53,27 @@ class SpacyUtil:
 
     # gets the nsubj from the anchor verb
     def get_subject(anchor):
+        
+        if anchor.dep_ == 'acl' and anchor.head.pos_ == 'NOUN':
+            return SpacyUtil.get_noun(anchor.head)
+            
         for token in anchor.children:
-            if token.dep_ == 'nsubj':
+            if token.text.strip() and token.dep_ == 'nsubj':
                 return SpacyUtil.get_noun(token)
         return None
 
     # sometimes, tokens with nsubj are not always nouns
     def get_noun(nsubj):
-        if nsubj.pos_[-1] == 'N':
+        if nsubj.text.strip() and nsubj.pos_[-1] == 'N':
             return nsubj
         for token in nsubj.subtree:
-            if token.pos_[-1] == 'N':
+            if token.text.strip() and token.pos_[-1] == 'N':
                 return token
-        return None
+        return nsubj
 
     def get_object(anchor):
         for token in anchor.children:
-            if token.dep_ == 'dobj':
+            if token.text.strip() and token.dep_ == 'dobj':
                 return token
         return None
 
@@ -78,7 +82,7 @@ class SpacyUtil:
         for noun_chunk in noun.doc.noun_chunks:
             if noun in noun_chunk:
                     return noun_chunk
-        return None
+        return noun.doc[noun.i:noun.i + 1]
 
     # gets the index of the input sentence in the document's list of sentences
     def get_sentence_index(sent):

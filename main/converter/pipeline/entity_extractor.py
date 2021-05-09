@@ -22,6 +22,7 @@ class EntityExtractor:
         for ent in doc.ents:
             if ent.label_ == 'PERSON' and self.get_character(ent.start, ent.end) is None:
                 entity = Entity(
+                    story = self.story,
                     reference_start = ent.start,
                     reference_end = ent.end,
                 )
@@ -204,7 +205,7 @@ class EntityExtractor:
         for referer in self.characters:
             referer_start = referer.entity.reference_start
             referer_end = referer.entity.reference_end
-            if referer.entity.refers_to is None and (referer_start, referer_end) in mention_entity_dict:
+            if self.doc[referer_end - 1].pos_ == 'PRON' and referer.entity.refers_to is None and (referer_start, referer_end) in mention_entity_dict:
                 char_start, char_end = mention_entity_dict[(referer_start, referer_end)]
                 char = self.get_character(char_start, char_end)
                 if char is None:

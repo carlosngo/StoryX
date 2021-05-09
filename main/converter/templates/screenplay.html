@@ -43,16 +43,13 @@
     </div> -->
     <div class="d-xl-flex align-items-xl-center" id="menu" style="padding: 20px;">
         <form action="{% url 'stories' %}" method="get" id="form-back">
-            {% csrf_token %}
             <button class="btn menuButtons" id="newStoryButton" type="submit">Back</button>
         </form>
         
         <form action="{% url 'screenplay_pdf_download' id=story_id %}" method="get" id="form-download-pdf">
-            {% csrf_token %}
             <button class="btn menuButtons" id="pdfButton" type="submit">Download as PDF</button>
         </form>
         <form action="{% url 'screenplay_tex_download' id=story_id %}" method="get" id="form-download-latex">
-            {% csrf_token %}
             <button class="btn menuButtons" id="latexButton" type="submit">Download as LaTeX</button>
         </form>
         

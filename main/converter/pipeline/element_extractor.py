@@ -21,11 +21,13 @@ class ElementExtractor:
         self.story = story
         coref_resolver = CorefResolver()
         coref_resolver.resolve_coreferences(self.doc, data)
+        print("extracting dialogues...")
         dialogue_extractor = DialogueExtractor()
         dialogue_extractor.extract_dialogue(self.doc, self.story)
-        dialogue_extractor.resolve_speakers(coref_resolver.mention_entity_dict)
-        # dialogue_extractor.verify_dialogues()
+        # dialogue_extractor.resolve_speakers(coref_resolver.mention_entity_dict)
+        dialogue_extractor.verify_dialogues()
         entity_extractor = EntityExtractor()
+        print("extracting entities...")
         entity_extractor.extract_entities(self.doc, self.story, dialogue_extractor.speakers)
         entity_extractor.resolve_characters(coref_resolver.mention_entity_dict)
         entity_extractor.resolve_props(coref_resolver.mention_entity_dict)
@@ -36,6 +38,7 @@ class ElementExtractor:
         # entity_extractor.verify_characters()
         # entity_extractor.verify_props()
 
+        print("extracting actions...")
         action_extractor = ActionExtractor()
         action_extractor.extract_events(self.doc, self.story, dialogue_extractor.dialogues, entity_extractor.characters, entity_extractor.props)
         # action_extractor.verify_events()
