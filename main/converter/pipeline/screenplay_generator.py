@@ -24,7 +24,7 @@ class ScreenplayGenerator:
         self.tex_str += self.generate_tex_body()
         self.tex_str += '\n\\theend\n\\end{document}'
         
-        print(self.tex_str)
+        # print(self.tex_str)
     
         with open(os.path.join(settings.SCREENPLAY_ROOT, self.story.get_filename() + '.tex'), 'w') as f:
             f.write(self.tex_str)
@@ -73,7 +73,7 @@ class ScreenplayGenerator:
     def generate_tex_dialogue(self, dialogue_event):
         character = ''
         if dialogue_event.characters.count() == 0:
-            string = 'Unknown speaker: '
+            character = 'UNKNOWN'
         else:
             for speaker in dialogue_event.characters.all():
                 entity = speaker.entity

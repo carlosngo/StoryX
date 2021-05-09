@@ -144,7 +144,7 @@ class ActionExtractor:
                     self.d_idx = self.d_idx + 1
 
                 
-                if is_dialogue == False and doc[sent.start].text.strip() != '"':
+                if is_dialogue == False:
 
                     # this sets the sent_characters list
                     for character in character_list:

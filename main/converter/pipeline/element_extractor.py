@@ -24,7 +24,7 @@ class ElementExtractor:
         print("extracting dialogues...")
         dialogue_extractor = DialogueExtractor()
         dialogue_extractor.extract_dialogue(self.doc, self.story)
-        # dialogue_extractor.resolve_speakers(coref_resolver.mention_entity_dict)
+        dialogue_extractor.resolve_speakers(coref_resolver.mention_entity_dict)
         dialogue_extractor.verify_dialogues()
         entity_extractor = EntityExtractor()
         print("extracting entities...")
