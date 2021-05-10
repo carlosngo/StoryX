@@ -18,11 +18,11 @@ class ScreenplayGenerator:
         self.generate_pdf()
 
     def generate_tex(self):
-        self.tex_str = '\\documentclass{screenplay}'
+        self.tex_str = '\\documentclass{screenplay}\n\\newenvironment{simplechar}{%\n\catcode`\$=12\n\catcode`\&=12\n\catcode`\#=12\n\catcode`\^=12\n\catcode`\_=12\n\catcode`\~=12\n\catcode`\%=12\n}{}\n'
         self.tex_str += self.generate_tex_meta()
-        self.tex_str += '\\begin{document}\n\coverpage\n'
+        self.tex_str += '\\begin{document}\n\\coverpage\n\\begin{simplechar}'
         self.tex_str += self.generate_tex_body()
-        self.tex_str += '\n\\theend\n\\end{document}'
+        self.tex_str += '\n\\theend\n\\end{simplechar}\n\\end{document}'
         
         # print(self.tex_str)
     
