@@ -100,5 +100,10 @@ def screenplay_pdf(request, id):
     return FileResponse(open(path_to_pdf, 'rb'), content_type='application/pdf')
 
 
+def evaluate(request, id):
+    # Handle file upload
+
+    return render(request, 'stories.html', {'stories': stories, 'scores': scores})
+
 
 

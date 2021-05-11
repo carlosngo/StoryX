@@ -10,4 +10,5 @@ urlpatterns = [
     path('stories/<uuid:id>/screenplay/pdf', views.screenplay_pdf, name='screenplay_pdf'),
     path('stories/<uuid:id>/screenplay/pdf/download', views.screenplay_pdf_download, name='screenplay_pdf_download'),
     path('stories/<uuid:id>/screenplay/tex/download', views.screenplay_tex_download, name='screenplay_tex_download'),
+    path('stories/<uuid:id>/screenplay/tex/download', views.evaluate, name='evaluate'),
 ]
