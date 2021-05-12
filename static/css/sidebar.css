@@ -178,6 +178,10 @@ ul ul a {
   background: transparent;
 }
 
+.noStyle{
+    list-style-type: none;
+}
+
 .menuButtons {
   padding: 0px;
   border-radius: 2px;
@@ -209,3 +213,10 @@ iframe {
   position: absolute;
 }
 
+.wrap {
+  width: 80%;
+  max-width: 24em;
+  margin: 0 auto;
+  padding: 0.25em 0.625em;
+  background-color: black;
+}
