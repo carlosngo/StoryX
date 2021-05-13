@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>StoryX Evaluator</title>   
+    </head>
+    <body>
+    <!-- List of uploaded documents -->
+        <h1>{{ title }}</h1>
+        <div>
+            <h2>Dialogue Content Evaluation</h2>
+            {% for label, score in dialogue_content_score %}
+                <div>{{ label }}: {{ score }}</div>
+            {% endfor %}
+        </div>
+        <div>
+            <h2>Dialogue Speaker Evaluation</h2>
+            {% for label, score in dialogue_speaker_score %}
+                <div>{{ label }}: {{ score }}</div>
+            {% endfor %}
+        </div>
+        <div>
+            <h2>Character Evaluation</h2>
+            {% for label, score in character_score %}
+                <div>{{ label }}: {{ score }}</div>
+            {% endfor %}
+        </div>
+        <div>
+            <h2>Prop Evaluation</h2>
+            {% for label, score in prop_score %}
+                <div>{{ label }}: {{ score }}</div>
+            {% endfor %}
+        </div>
+        <div>
+            <h2>Action Line Evaluation</h2>
+            {% for label, score in action_score %}
+                <div>{{ label }}: {{ score }}</div>
+            {% endfor %}
+        </div>
+        <div>
+            <h2>Scene Transition Evaluation</h2>
+            {% for label, score in transition_score %}
+                <div>{{ label }}: {{ score }}</div>
+            {% endfor %}
+        </div>
+    </body>
+</html> 

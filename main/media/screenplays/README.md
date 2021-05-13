@@ -1,3 +1,0 @@
-Just a placeholder.
-
-Nothing to see here...

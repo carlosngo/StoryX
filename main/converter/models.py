@@ -26,6 +26,8 @@ class Story(models.Model):
     def get_absolute_url(self):
         return "/converter/stories/%s" % self.id
 
+    def get_evaluation_url(self):
+        return "/converter/stories/%s/evaluate" % self.id
     def get_annotation_url(self):
         return "/converter/stories/%s/annotate" % self.id
 

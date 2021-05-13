@@ -9,6 +9,7 @@ from converter.forms import StoryForm
 from converter.pipeline.element_extractor import ElementExtractor
 from converter.pipeline.annotation_helper import AnnotationHelper
 from converter.pipeline.screenplay_generator import ScreenplayGenerator
+from converter.pipeline.extraction_evaluator import ExtractionEvaluator
 
 import requests
 import os
@@ -101,9 +102,24 @@ def screenplay_pdf(request, id):
 
 
 def evaluate(request, id):
-    # Handle file upload
+    story = get_object_or_404(Story, id=id)
 
-    return render(request, 'stories.html', {'stories': stories, 'scores': scores})
+    extraction_evaluator = ExtractionEvaluator(story)
+
+    extraction_evaluator.evaluate_extraction()
+
+    score_labels = ['Precision', 'Recall', 'F1 Score']
+
+    return render(request, 'evaluate_test.html', {
+        'title': story.title,
+        'dialogue_content_score': list(zip(score_labels, extraction_evaluator.dialogue_content_score)),
+        'dialogue_speaker_score': list(zip(score_labels, extraction_evaluator.dialogue_speaker_score)),
+        'character_score': list(zip(score_labels, extraction_evaluator.character_score)),
+        'prop_score': list(zip(score_labels, extraction_evaluator.prop_score)),
+        'action_score': list(zip(score_labels, extraction_evaluator.action_score)), 
+        'transition_score': list(zip(score_labels, extraction_evaluator.transition_score)), 
+    })
+    
 
 
 

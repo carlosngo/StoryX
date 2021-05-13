@@ -129,13 +129,17 @@ class EntityExtractor:
         #         self.props.pop(i)
         #         self.characters.append(Character(entity=prop.entity))
 
+    def get_distinct_entities(entities, doc):
+        distinct_entities = {}
+        for e in entities:
+            entity = e.entity
+            ent_string = EntityExtractor.to_string(entity, doc).lower().strip()
+            if ent_string not in distinct_entities:
+                distinct_entities[ent_string] = entity
+        return list(distinct_entities.values())
+
     def get_distinct_characters(self):
-        distinct_characters = {}
-        for character in self.characters:
-            char_string = self.to_string(character.entity).lower()
-            if char_string not in distinct_characters:
-                distinct_characters[char_string] = character
-        return list(distinct_characters.values())
+        return EntityExtractor.get_distinct_entites(self.characters, self.doc)
 
     def verify_characters(self):
         print("extracted " + str(len(self.characters)) + " characters")
@@ -150,12 +154,7 @@ class EntityExtractor:
             self.print_entity(character)
     
     def get_distinct_props(self):
-        distinct_props = {}
-        for prop in self.props:
-            prop_string = self.to_string(prop.entity).lower()
-            if prop_string not in distinct_props:
-                distinct_props[prop_string] = prop
-        return list(distinct_props.values())
+        return EntityExtractor.get_distinct_entities(self.props, self.doc)
 
     def verify_props(self):
         print("extracted " + str(len(self.props)) + " props")
@@ -179,6 +178,12 @@ class EntityExtractor:
         s = ''
         for i in range(entity.reference_start, entity.reference_end):
             s = s + self.doc[i].text_with_ws
+        return s    
+    
+    def to_string(entity, doc):
+        s = ''
+        for i in range(entity.reference_start, entity.reference_end):
+            s = s + doc[i].text_with_ws
         return s    
 
     def get_character(self, start, end):

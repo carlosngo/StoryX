@@ -35,6 +35,7 @@ STORY_ROOT = os.path.join(MEDIA_ROOT, 'stories')
 
 SCREENPLAY_ROOT = os.path.join(MEDIA_ROOT, 'screenplays')
 
+ANNOTATION_ROOT = os.path.join(MEDIA_ROOT, 'annotations')
 # Application definition
 
 INSTALLED_APPS = [

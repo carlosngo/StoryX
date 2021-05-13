@@ -79,9 +79,12 @@ class SpacyUtil:
 
     # gets the noun chunk
     def get_noun_chunk(noun):
+        for ent in noun.doc.ents:
+            if noun in ent:
+                return ent
         for noun_chunk in noun.doc.noun_chunks:
             if noun in noun_chunk:
-                    return noun_chunk
+                return noun_chunk
         return noun.doc[noun.i:noun.i + 1]
 
     # gets the index of the input sentence in the document's list of sentences

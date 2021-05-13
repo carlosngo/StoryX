@@ -118,96 +118,90 @@ class ActionExtractor:
         
         #iterate through the document by sentence
         for idx, sent in enumerate(doc.sents):
-            if i <= idx:
                 # check if current sentence is a dialogue event
                 # print("\n\ndlen", d_len, "\nself.d_idx: ", self.d_idx, "\nidx: ", idx, "\n[self.d_idx]sentence_range: ",    range(dialogue_events[self.d_idx].event.sentence_start, dialogue_events[self.d_idx].event.sentence_end))
+            while self.d_idx < d_len and idx in range(dialogue_events[self.d_idx].event.sentence_start, dialogue_events[self.d_idx].event.sentence_end): 
+                type = ActionExtractor.EVENT_DIALOGUE
+                self.seq = self.seq + 1
+                event = dialogue_events[self.d_idx].event
+                event.event_number = self.seq
+                
+                # event.set_scene_id = self.scene_counter
+                # event.type = ActionExtractor.EVENT_DIALOGUE
+                event.scene = scene
+                event.save()
+                # print('found dialogue: ')
+                self.events.append(dialogue_events[self.d_idx])
+                dialogue_total = dialogue_total + 1
+                is_dialogue = True
+                self.d_idx = self.d_idx + 1
 
-                while self.d_idx < d_len and idx in range(dialogue_events[self.d_idx].event.sentence_start, dialogue_events[self.d_idx].event.sentence_end):
+            if self.d_idx > 0 and idx in range(dialogue_events[self.d_idx - 1].event.sentence_start, dialogue_events[self.d_idx - 1].event.sentence_end):
+                is_dialogue = True
 
-                    
-                    type = ActionExtractor.EVENT_DIALOGUE
-                    
-                    
-                    self.seq = self.seq + 1
-                    event = dialogue_events[self.d_idx].event
-                    event.event_number = self.seq
-                    
-                    # event.set_scene_id = self.scene_counter
-                    # event.type = ActionExtractor.EVENT_DIALOGUE
-                    event.scene = scene
+            if is_dialogue == False:
+
+                # this sets the sent_characters list
+                for character in character_list:
+                    if sent == doc[character.entity.reference_start].sent:
+                        sent_characters.append(character)
+
+                for prop in prop_list:
+                    if sent == doc[prop.entity.reference_start].sent:
+                        sent_props.append(prop)
+                # if char_idx < len(character_list):
+                #     temp_character = character_list[char_idx]
+
+                # if prop_idx < len(prop_list):
+                #     temp_prop = prop_list[prop_idx]
+
+                # # check if the character is in the current sentence
+                # if sent == doc[temp_character.entity.reference_start].sent:
+                #     # save all sentence characters into sent_characters
+                #     while (sent == doc[temp_character.entity.reference_start].sent):
+                #         sent_characters.append(temp_character)
+                #         char_idx = char_idx + 1
+                #         if char_idx < len(character_list):
+                #             temp_character = character_list[char_idx]
+                #         else:
+                #             break
+
+                # # check if the prop is in the current sentence
+                # if sent == doc[temp_prop.entity.reference_start].sent:
+                #     # save all sentence props into sent_props
+                #     while (sent == doc[temp_prop.entity.reference_start].sent):
+                #         sent_props.append(temp_prop)
+                #         prop_idx = prop_idx + 1
+                #         if prop_idx < len(prop_list):
+                #             temp_prop = prop_list[prop_idx]
+                #         else:
+                #             break
+                
+                self.seq = self.seq + 1
+                type = self.check_event_type(sent, sent_characters, sent_props)
+
+                if type == ActionExtractor.EVENT_TRANSITION:
+                    event = self.parse_transition_sentence(sent, idx, sent_characters, sent_props)
+                    event.action_event.event.scene = scene
+                    event.action_event.event.save()
+                    event.action_event.save()
                     event.save()
-                    # print('found dialogue: ')
-                    self.events.append(dialogue_events[self.d_idx])
-                    dialogue_total = dialogue_total + 1
-                    i = max(i, event.sentence_end - 1)
-                    is_dialogue = True
-                    self.d_idx = self.d_idx + 1
-
-                
-                if is_dialogue == False:
-
-                    # this sets the sent_characters list
-                    for character in character_list:
-                        if sent == doc[character.entity.reference_start].sent:
-                            sent_characters.append(character)
-
-                    for prop in prop_list:
-                        if sent == doc[prop.entity.reference_start].sent:
-                            sent_props.append(prop)
-                    # if char_idx < len(character_list):
-                    #     temp_character = character_list[char_idx]
-
-                    # if prop_idx < len(prop_list):
-                    #     temp_prop = prop_list[prop_idx]
-
-                    # # check if the character is in the current sentence
-                    # if sent == doc[temp_character.entity.reference_start].sent:
-                    #     # save all sentence characters into sent_characters
-                    #     while (sent == doc[temp_character.entity.reference_start].sent):
-                    #         sent_characters.append(temp_character)
-                    #         char_idx = char_idx + 1
-                    #         if char_idx < len(character_list):
-                    #             temp_character = character_list[char_idx]
-                    #         else:
-                    #             break
-
-                    # # check if the prop is in the current sentence
-                    # if sent == doc[temp_prop.entity.reference_start].sent:
-                    #     # save all sentence props into sent_props
-                    #     while (sent == doc[temp_prop.entity.reference_start].sent):
-                    #         sent_props.append(temp_prop)
-                    #         prop_idx = prop_idx + 1
-                    #         if prop_idx < len(prop_list):
-                    #             temp_prop = prop_list[prop_idx]
-                    #         else:
-                    #             break
-                    
-                    self.seq = self.seq + 1
-                    type = self.check_event_type(sent, sent_characters, sent_props)
-
-                    if type == ActionExtractor.EVENT_TRANSITION:
-                        event = self.parse_transition_sentence(sent, idx, sent_characters, sent_props)
-                        event.action_event.event.scene = scene
-                        event.action_event.event.save()
-                        event.action_event.save()
-                        event.save()
-                        self.scenes.append(scene)
-                        scene = Scene(story=self.story, scene_number=self.scene_counter)
-                        scene.save()
-                    else:
-                        event = self.parse_action_sentence(sent, idx, sent_characters, sent_props)
-                        event.event.scene = scene
-                        event.event.save()
-                        event.save()
-                        # scene.events.append(event)
-                    self.events.append(event)
-                
-                # print('type: ', type)
-                # reset array
-                sent_characters = []
-                sent_props = []
-                i = i + 1
-                is_dialogue = False
+                    self.scenes.append(scene)
+                    scene = Scene(story=self.story, scene_number=self.scene_counter)
+                    scene.save()
+                else:
+                    event = self.parse_action_sentence(sent, idx, sent_characters, sent_props)
+                    event.event.scene = scene
+                    event.event.save()
+                    event.save()
+                    # scene.events.append(event)
+                self.events.append(event)
+            
+            # print('type: ', type)
+            # reset array
+            sent_characters = []
+            sent_props = []
+            is_dialogue = False
 
         if type != ActionExtractor.EVENT_TRANSITION:
             self.scenes.append(scene)

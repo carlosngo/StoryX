@@ -88,19 +88,34 @@ class ScreenplayGenerator:
         dialogue_str = dialogue_str.strip()[1:-1].replace("\n", " ")
         if dialogue_str[-1] == ',':
             dialogue_str = dialogue_str[:-1] + '.'
+        dialogue_char_limit = 1500
+        dialogue_chunks = len(dialogue_str) // dialogue_char_limit
+        if len(dialogue_str) % dialogue_char_limit != 0:
+           dialogue_chunks = dialogue_chunks + 1 
+        tex = ''
+        for i in range(dialogue_chunks):
+            start = i * dialogue_char_limit
+            end = min(len(dialogue_str), (i + 1) * dialogue_char_limit)
+            dialogue_slice = ''
+            if start != 0:
+                dialogue_slice = '-'
+            dialogue_slice = dialogue_slice + dialogue_str[start:end]
+            if end != len(dialogue_str):
+                dialogue_slice = dialogue_slice + '-'
+            tex = tex + "\n\n\\begin{{dialogue}}{{{}}}\n\t{}\n\\end{{dialogue}}\n\n".format(character, dialogue_slice)
 
-        tex = "\n\n\\begin{{dialogue}}{{{}}}\n\t{}\n\\end{{dialogue}}\n\n".format(character, dialogue_str)
         return tex
 
 
     def generate_pdf(self):
         path_to_tex = os.path.join(settings.SCREENPLAY_ROOT, self.story.get_filename() + '.tex')
-        # cmd = ['pdflatex', '-interaction', 'nonstopmode', path_to_tex]
-        # proc = subprocess.Popen(cmd)
-        # proc.communicate()
-        pdfl = PDFLaTeX.from_texfile(path_to_tex)
+        cmd = ['pdflatex', '-interaction', 'nonstopmode', '-output-directory', 'media/screenplays', path_to_tex]
+        proc = subprocess.Popen(cmd)
+        proc.communicate()
+        # print(path_to_tex)
+        # pdfl = PDFLaTeX.from_texfile(path_to_tex)
 
-        pdf, log, completed_process = pdfl.create_pdf()
-        with open(os.path.join(settings.SCREENPLAY_ROOT, self.story.get_filename() + '.pdf'), 'wb') as f:
-            f.write(pdf)
+        # pdf, log, completed_process = pdfl.create_pdf()
+        # with open(os.path.join(settings.SCREENPLAY_ROOT, self.story.get_filename() + '.pdf'), 'wb') as f:
+        #     f.write(pdf)
 

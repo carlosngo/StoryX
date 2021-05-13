@@ -19,6 +19,12 @@ class DialogueExtractor:
         self.speakers = []
         self.extract_content()
         self.extract_speakers()
+        # for i in range(len(self.dialogues) - 1):
+        #     cur = self.dialogues[i].event
+        #     next = self.dialogues[i + 1].event
+        #     if cur.sentence_end > next.sentence_start:
+        #         cur.sentence_end = next.sentence_start
+        #         cur.save()
         return self.dialogues
 
     # HELPER FUNCTIONS START
@@ -47,7 +53,7 @@ class DialogueExtractor:
             string = string + self.doc[i].text_with_ws
         
         print(string)
-        # print(f'{dialogue.event.sentence_start}, {dialogue.event.sentence_end}')
+        print(f'{dialogue.event.sentence_start}, {dialogue.event.sentence_end}')
         # self.print_event(dialogue)
 
 
@@ -86,7 +92,11 @@ class DialogueExtractor:
                 # print(self.doc[arr[len(arr) - 1][0]: arr[len(arr) - 1][1] + 1].text)
                 # print(f'{arr[len(arr) - 1][0]}, {arr[len(arr) - 1][1]}') 
                 # if the "dialogue" does not end with punctuation, discard
-                if not SpacyUtil.get_previous_token(self.doc[current_index]).is_punct:
+                previous_token = SpacyUtil.get_previous_token(self.doc[current_index])
+                if not (
+                    previous_token.is_punct
+                    or previous_token.text.strip()[-1] == '-'
+                ):
                     arr.pop()
                 # create new dialogue if there are more
                 if i < len(matches) - 1:
@@ -207,39 +217,47 @@ class DialogueExtractor:
                 if last_token.text != ',' and last_token.is_punct:
                     dialogue.event.sentence_end = SpacyUtil.get_sentence_index(next_word.sent) + 1
                     dialogue.event.save()
-                while next_word.pos_ != 'VERB' and next_word.pos_ != 'AUX':
+                
+                while next_word.pos_[-1] != 'N':
                     next_word = SpacyUtil.get_next_word(next_word)
                 
-                speaker_verb = next_word
-                
-                subject = SpacyUtil.get_subject(speaker_verb)
-                dobj = SpacyUtil.get_object(speaker_verb)
-                
-                
-                # if subject is not None:
-                #      print(f'subject = {subject.text}, subject.idx = {subject.i}, content_start = {dialogue.content_start}, content_end = {dialogue.content_end}')
-                if subject is not None:
-                    if dobj is None:
-                        speaker_noun = subject
-                    # there is a subject and an object
-                    # if the subject is within the dialogue content for some reason
-                    elif subject.i in range(dialogue.content_start, dialogue.content_end):
-                        speaker_noun = dobj
-                    # otherwise always prioritize subject
-                    else:
-                        speaker_noun = subject
-                # there is no subject
-                else:
-                    speaker_noun = dobj
-                print(f'verb = {speaker_verb.text}')
-                
-                if speaker_noun is None and speaker_verb.head.pos_ == 'VERB':
-                    speaker_noun = SpacyUtil.get_subject(speaker_verb.head)
-                # print(self.doc[dialogue.content_start:dialogue.content_end])
+                speaker_noun = next_word
+                # print(speaker_noun)
 
-                if speaker_noun is None:
-                    print(f'no noun for sentence {speaker_verb.sent.text}')
-                    continue
+
+                # while next_word.pos_ != 'VERB' and next_word.pos_ != 'AUX':
+                #     next_word = SpacyUtil.get_next_word(next_word)
+                
+                # speaker_verb = next_word
+                
+                # subject = SpacyUtil.get_subject(speaker_verb)
+                # dobj = SpacyUtil.get_object(speaker_verb)
+                
+                
+                # # if subject is not None:
+                # #      print(f'subject = {subject.text}, subject.idx = {subject.i}, content_start = {dialogue.content_start}, content_end = {dialogue.content_end}')
+                # if subject is not None:
+                #     if dobj is None:
+                #         speaker_noun = subject
+                #     # there is a subject and an object
+                #     # if the subject is within the dialogue content for some reason
+                #     elif subject.i in range(dialogue.content_start, dialogue.content_end):
+                #         speaker_noun = dobj
+                #     # otherwise always prioritize subject
+                #     else:
+                #         speaker_noun = subject
+                # # there is no subject
+                # else:
+                #     speaker_noun = dobj
+                # print(f'verb = {speaker_verb.text}')
+                
+                # if speaker_noun is None and speaker_verb.head.pos_ == 'VERB':
+                #     speaker_noun = SpacyUtil.get_subject(speaker_verb.head)
+                # # print(self.doc[dialogue.content_start:dialogue.content_end])
+
+                # if speaker_noun is None:
+                #     print(f'no noun for sentence {speaker_verb.sent.text}')
+                #     continue
                 
                 speaker_noun_chunk = SpacyUtil.get_noun_chunk(speaker_noun)
                 
