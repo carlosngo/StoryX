@@ -133,9 +133,7 @@ class ExtractionEvaluator:
             annotation.append(tAnn)
 
         annotation = convert_entities_to_string(EntityExtractor.get_distinct_entities(annotation, self.doc), self.doc)
-
-        tp, fp, fn = self.count(prediction, annotation)
-        return self.evaluate(tp, fp, fn)
+        return self.evaluate_bianca(*self.count_bianca(prediction, annotation))
     
     def evaluate_props(self, file):
         prediction = self.props
@@ -148,8 +146,7 @@ class ExtractionEvaluator:
             annotation.append(tAnn)
 
         annotation = convert_entities_to_string(EntityExtractor.get_distinct_entities(annotation, self.doc), self.doc)
-        tp, fp, fn = self.count(prediction, annotation)
-        return self.evaluate(tp, fp, fn)
+        return self.evaluate_bianca(*self.count_bianca(prediction, annotation))
     
     def evaluate_actions(self, file):
         prediction = []
@@ -223,6 +220,70 @@ class ExtractionEvaluator:
         print(f'tp = {tp}, fp = {fp}, fn = {fn}')
         return tp, fp, fn
 
+    def count_bianca(self, prediction, annotation):
+        perfect = 0
+        lacking = 0
+        excess = 0
+        missing = 0
+        wrong = 0
+        p_idx = len(prediction) - 1
+        a_idx = len(annotation) - 1
+        prediction.sort(reverse=True)
+        annotation.sort(reverse=True)
+        print('preditions')
+        print(prediction)
+        print('annotations')
+        print(annotation)
+        while p_idx >= 0 and a_idx >= 0:
+            a = prediction[p_idx]
+            b = annotation[a_idx]
+            # a is a true positive
+            if a == b:
+                perfect = perfect + 1
+                prediction.pop(p_idx)
+                annotation.pop(a_idx)
+                p_idx = p_idx - 1
+                a_idx = a_idx - 1
+            elif a < b:
+                p_idx = p_idx - 1
+            else:
+                a_idx = a_idx - 1
+        
+        p_idx = len(prediction) - 1
+        while p_idx >= 0:
+            a = prediction[p_idx]
+            a_idx = len(annotation) - 1
+            is_lacking = False
+            while a_idx >= 0 and not is_lacking:
+                b = annotation[a_idx]
+                if a in b:
+                    lacking = lacking + 1
+                    prediction.pop(p_idx)
+                    annotation.pop(a_idx)
+                    is_lacking = True
+                a_idx = a_idx - 1
+            p_idx = p_idx - 1
+        
+        a_idx = len(annotation) - 1
+        while a_idx >= 0:
+            a = annotation[a_idx]
+            p_idx = len(prediction) - 1
+            is_excess = False
+            while p_idx >= 0 and not is_excess:
+                b = prediction[p_idx]
+                if a in b:
+                    excess = excess + 1
+                    prediction.pop(p_idx)
+                    annotation.pop(a_idx)
+                    is_excess = True
+                p_idx = p_idx - 1
+            a_idx = a_idx - 1
+        
+        missing = len(annotation)
+        wrong = len(prediction)
+    
+        print(f'perfect = {perfect}, lacking = {lacking}, excess = {excess}, missing = {missing}, wrong = {wrong}')
+        return perfect, lacking, excess, missing, wrong
 
     # Precision = TruePositives / (TruePositives + FalsePositives)
     # Recall = TruePositives / (TruePositives + FalseNegatives)
@@ -230,5 +291,11 @@ class ExtractionEvaluator:
     def evaluate(self, tp, fp, fn):
         precision = 1.0 * tp / (tp + fp)
         recall = 1.0 * tp / (tp + fn)
+        f1 = (2 * precision * recall) / (precision + recall)
+        return precision, recall, f1
+
+    def evaluate_bianca(self, perfect, lacking, excess, missing, wrong):
+        precision = (perfect + lacking + excess) / (perfect + lacking + excess + wrong)
+        recall = (perfect + lacking + excess) / (perfect + lacking + excess + missing)
         f1 = (2 * precision * recall) / (precision + recall)
         return precision, recall, f1

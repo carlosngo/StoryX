@@ -35,15 +35,18 @@ class ScreenplayGenerator:
     def generate_tex_body(self):
         str_body = ''
         for scene in self.story.scene_set.all().order_by('scene_number'):
-            scene_header = "\n\nScene {}\n\n".format(scene.scene_number)
-            str_body += scene_header
+            scene_str = "\n\nScene {}\n\n".format(scene.scene_number)
+            
             for event in scene.event_set.all().order_by('event_number'):
                 if hasattr(event, 'dialogueevent'):
-                    str_body += self.generate_tex_dialogue(event)
+                    scene_str += self.generate_tex_dialogue(event)
                 elif hasattr(event, 'actionevent'):
-                    str_body += self.generate_tex_action(event)
+                    scene_str += self.generate_tex_action(event)
                 else:
-                    str_body += self.generate_tex_transition(event)
+                    scene_str += self.generate_tex_transition(event)
+            if scene_str.strip(' \n').count('\n') > 0:
+                str_body += scene_str
+        
         return str_body
 
     def generate_tex_transition(self, transition_event):
@@ -52,6 +55,9 @@ class ScreenplayGenerator:
 
         for token in self.sent_list[start]:
             action = action + token.text_with_ws
+
+        action = action.strip('" ')
+
         newaction = action[:1].upper() + action[1:]
         return newaction
 
@@ -61,6 +67,9 @@ class ScreenplayGenerator:
 
         for token in self.sent_list[start]:
             action = action + token.text_with_ws
+
+        action = action.strip('" ')
+        
         newaction = action[:1].upper() + action[1:]
         return newaction
 
@@ -82,6 +91,8 @@ class ScreenplayGenerator:
                 for i in range(entity.reference_start, entity.reference_end):
                     character = character + self.doc[i].text_with_ws
             character = character.strip()
+        
+        character = character.strip('" ')
         dialogue_str = ''
         for i in range(dialogue_event.dialogueevent.content_start, dialogue_event.dialogueevent.content_end):
             dialogue_str = dialogue_str + self.doc[i].text_with_ws

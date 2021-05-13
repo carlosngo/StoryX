@@ -6,6 +6,16 @@ from spacy.matcher import DependencyMatcher
 
 import spacy
 
+def range_subset(range1, range2):
+    """Whether range1 is a subset of range2."""
+    if not range1:
+        return True  # empty range is subset of anything
+    if not range2:
+        return False  # non-empty range can't be subset of empty range
+    if len(range1) > 1 and range1.step % range2.step:
+        return False  # must have a single value or integer multiple step
+    return range1.start in range2 and range1[-1] in range2
+
 class EntityExtractor:
     def __init__(self):
         self.doc = None
@@ -136,7 +146,19 @@ class EntityExtractor:
             ent_string = EntityExtractor.to_string(entity, doc).lower().strip()
             if ent_string not in distinct_entities:
                 distinct_entities[ent_string] = entity
-        return list(distinct_entities.values())
+        non_overlapping_entities = distinct_entities.copy()
+        for a_str in distinct_entities.keys():
+            a_ent = distinct_entities[a_str]
+            has_overlap = False
+            for b_str in distinct_entities.keys():
+                b_ent = distinct_entities[b_str]
+                if a_str != b_str:
+                    if range_subset(range(a_ent.reference_start, a_ent.reference_end), range(b_ent.reference_start, b_ent.reference_end)):
+                        non_overlapping_entities.pop(b_str, None)
+                    if range_subset(range(b_ent.reference_start, b_ent.reference_end), range(a_ent.reference_start, a_ent.reference_end)):
+                        non_overlapping_entities.pop(a_str, None)
+                    
+        return list(non_overlapping_entities.values())
 
     def get_distinct_characters(self):
         return EntityExtractor.get_distinct_entites(self.characters, self.doc)
