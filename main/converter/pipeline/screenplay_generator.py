@@ -30,7 +30,7 @@ class ScreenplayGenerator:
             f.write(self.tex_str)
 
     def generate_tex_meta(self):
-        return "\\title{{{}}}\n\n\\author{{{}}}\n".format(self.story.title, self.story.author)
+        return "\\title{{{}}}\n\n\\author{{{}}}\\address{{}}\n".format(self.story.title, self.story.author)
 
     def generate_tex_body(self):
         str_body = ''
