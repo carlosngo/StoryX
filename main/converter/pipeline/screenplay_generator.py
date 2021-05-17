@@ -36,7 +36,7 @@ class ScreenplayGenerator:
         str_body = ''
         for scene in self.story.scene_set.all().order_by('scene_number'):
             # scene_str = "\n\CUT TO SCENE {}\n\n".format(scene.scene_number)
-            scene_str = "\n\CUT TO.\n\n"
+            scene_str = "\n\CUT TO:\n\n"
             
             for event in scene.event_set.all().order_by('event_number'):
                 if hasattr(event, 'dialogueevent'):
