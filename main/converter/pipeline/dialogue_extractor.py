@@ -113,7 +113,8 @@ class DialogueExtractor:
                 token = self.doc[j]
                 # line breaks are empty if stripped
 
-                if not token.text.strip() and self.doc[next_index].is_sent_start:
+                if not token.text.strip() and self.doc.text[self.doc[next_index].idx - 1] == '\n':
+                    print(self.doc[next_index].sent.text + ' is a continuation')
                     has_break = True
                     break
                     
@@ -121,9 +122,11 @@ class DialogueExtractor:
                 # if there is no dialogue continuation, next double quotes is a closing double quotes
                 processed[i + 1] = True
         
+        print('content done')
         for i in range(len(arr)):
             first_token = self.doc[arr[i][0] + 1]
             last_token = self.doc[arr[i][1] - 1]
+            print(first_token.sent.text)
             sentence_start = SpacyUtil.get_sentence_index(first_token.sent)
             sentence_end = SpacyUtil.get_sentence_index(last_token.sent) + 1
             event = Event(

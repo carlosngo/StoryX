@@ -36,7 +36,7 @@ class ScreenplayGenerator:
         str_body = ''
         for scene in self.story.scene_set.all().order_by('scene_number'):
             # scene_str = "\n\CUT TO SCENE {}\n\n".format(scene.scene_number)
-            scene_str = "\n\CUT TO:\n\n"
+            scene_str = "\n\n\\begin{flushright}CUT TO:\\end{flushright}\n\n"
             
             for event in scene.event_set.all().order_by('event_number'):
                 if hasattr(event, 'dialogueevent'):
@@ -71,7 +71,7 @@ class ScreenplayGenerator:
 
         action = action.strip('" ')
         
-        newaction = action[:1].upper() + action[1:]
+        newaction = action[:1].upper() + action[1:] + ' '
         return newaction
 
     # REFERENCE
@@ -100,6 +100,7 @@ class ScreenplayGenerator:
         dialogue_str = dialogue_str.strip()[1:-1].replace("\n", " ")
         if dialogue_str[-1] == ',':
             dialogue_str = dialogue_str[:-1] + '.'
+        dialogue_str = dialogue_str[:1].upper() + dialogue_str[1:]
         dialogue_char_limit = 1500
         dialogue_chunks = len(dialogue_str) // dialogue_char_limit
         if len(dialogue_str) % dialogue_char_limit != 0:
