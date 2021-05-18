@@ -13,7 +13,7 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
         <!-- {% load static %} -->
         <!-- <script src="{% static 'js/evaluate.js' %}"></script> -->
-        <link rel="stylesheet" type="text/css" href="{% static 'css/annotate.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/evaluate.css' %}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -25,34 +25,38 @@
             <div class="col">
               <div class="sticky-top">
                 <div>&nbsp;</div>
-                <h2>{{ title }}</h2>
+                <h2>{{ story.title }}</h2>
                 <h4 class="pt-2 border-top border-dark">
                   <i style="font-weight:normal;">
-                  Evaluating  
-                  Story Elements</span>
+                  Story Element Extraction Results</span>
                   </i>
                 </h4>
                 <h5>
-                  Instruction: 
-                  <span style="font-weight:normal;" id="instruction">An error occured. Please contact a system administrator.</span>
+                    Legend: 
                 </h5>
-                <ul id="notes" class="mt-3">
-                  <li>This page will return the precision, f1, and recall score of the screenplay based on given annotations.</li>
+                <ul class="mt-3">
+                    <li><span class="action">Sentences highlighted <b>white</b> are action events</span></li>  
+                    <li><span class="dialogue">Sentences highlighted <b>green</b> are dialogue events</span></li>  
+                    <li><span class="transition">Sentences highlighted <b>yellow  </b> are scene transition events</span></li>
+                    <li><span class="character">Words</span> colored <b>red</b> are characters</li>
+                    <li><span class="prop">Words</span> colored <b>blue</b> are props</li>
                 </ul>
-                <div style="color:red">Warning: Refreshing or closing the page will result in data loss for this step.</div>
-                <div class="mt-4"></div>
-                <button type="button" class="btn btn-secondary" id="btn-annotate"><i class="fa fa-file-text-o mr-2"></i>Select Annotation file</button>
-                <button type="button" class="btn btn-light" id="btn-undo"><i class="fa fa-undo mr-2"></i>Reset</button>
+                {% if not has_annotation %}
+                <h5>
+                    <span style="font-weight:normal; color:red;" id="instruction">This story has not been annotated. To view the performance of the system, please <a href="{{ story.get_annotation_url }}">annotate</a> this story first.</span>
+                </h5>
+                {% endif %}
+                
                 <div class="mt-4">
                   <div>
                     <div class="d-flex justify-content-between">
                       <h5>Dialogue Content Evaluation</h5>
-                      <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                      
                     </div>
                     <table class="table">
                       <thead>
                         <tr>
-                          <th>Label</th>
+                          <th>Metric</th>
                           <th>Score</th>
                         </tr>
                       </thead>
@@ -69,20 +73,20 @@
                     </table>
                     <div class="d-flex justify-content-between">
                       <h5>Extracted Dialogue Content</h5>
-                      <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                      
                     </div>
-                    <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
+                    
                     <br>
                   </div>
                   <div>
                     <div class="d-flex justify-content-between">
                       <h5>Dialogue Speaker Evaluation</h5>
-                      <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                      
                     </div>
                     <table class="table">
                       <thead>
                         <tr>
-                          <th>Label</th>
+                          <th>Metric</th>
                           <th>Score</th>
                         </tr>
                       </thead>
@@ -99,20 +103,20 @@
                     </table>
                     <div class="d-flex justify-content-between">
                       <h5>Extracted Dialogue Speakers</h5>
-                      <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                      
                     </div>
-                    <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
+                    
                     <br>
                   </div>
                   <div>
                     <div class="d-flex justify-content-between">
                       <h5>Character Evaluation</h5>
-                      <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                      
                     </div>
                     <table class="table">
                       <thead>
                         <tr>
-                          <th>Label</th>
+                          <th>Metric</th>
                           <th>Score</th>
                         </tr>
                       </thead>
@@ -129,20 +133,20 @@
                     </table>
                     <div class="d-flex justify-content-between">
                       <h5>Extracted Characters</h5>
-                      <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                      
                     </div>
-                    <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
+                    
                     <br>
                   </div>
                   <div>
                     <div class="d-flex justify-content-between">
                       <h5>Prop Evaluation</h5>
-                      <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                      
                     </div>
                     <table class="table">
                       <thead>
                         <tr>
-                          <th>Label</th>
+                          <th>Metric</th>
                           <th>Score</th>
                         </tr>
                       </thead>
@@ -159,20 +163,20 @@
                     </table>
                     <div class="d-flex justify-content-between">
                       <h5>Extracted Props</h5>
-                      <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                      
                     </div>
-                    <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
+                    
                     <br>
                   </div>
                   <div>
                     <div class="d-flex justify-content-between">
                       <h5>Action Line Evaluation</h5>
-                      <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                      
                     </div>
                     <table class="table">
                       <thead>
                         <tr>
-                          <th>Label</th>
+                          <th>Metric</th>
                           <th>Score</th>
                         </tr>
                       </thead>
@@ -189,20 +193,20 @@
                     </table>
                     <div class="d-flex justify-content-between">
                       <h5>Extracted Action Lines</h5>
-                      <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                      
                     </div>
-                    <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
+                    
                     <br>
                   </div>
                   <div>
                     <div class="d-flex justify-content-between">
                       <h5>Scene Transition Evaluation</h5>
-                      <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                      
                     </div>
                     <table class="table">
                       <thead>
                         <tr>
-                          <th>Label</th>
+                          <th>Metric</th>
                           <th>Score</th>
                         </tr>
                       </thead>
@@ -219,23 +223,36 @@
                     </table>
                     <div class="d-flex justify-content-between">
                       <h5>Extracted Scene Transitions</h5>
-                      <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
+                      
                     </div>
-                    <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
+                    
                     <br>
                   </div>
                 </div>
               </div>
             </div>
             <div class="col my-4">
-              <div id="token-view">
-                {% for token in tokens %}
-                <span style="white-space: pre-line; font-size:18px;" class="token" data-idx="{{ forloop.counter0 }}">{{ token }}</span>
-                {% endfor %}
-              </div>
-              <div id="sentence-view">
+              <div>
                 {% for sentence in sentences %}
-                <span style="white-space: pre-line; font-size:18px;" class="sentence" data-idx="{{ forloop.counter0 }}">{{ sentence }}</span>
+                    {% if sentence.is_action %}
+                    <span class="action">
+                    {% elif sentence.is_transition %}
+                    <span class="transition">
+                    {% elif sentence.is_dialogue %}
+                    <span class="dialogue">
+                    {% else %}
+                    <span>
+                    {% endif %}
+                    {% for token in sentence.tokens %}
+                        {% if token.is_character %}
+                        <span style="white-space: pre-line; font-size:18px;" class="character">{{ token.text }}</span>
+                        {% elif token.is_prop %}
+                        <span style="white-space: pre-line; font-size:18px;" class="prop">{{ token.text }}</span>
+                        {% else %}
+                        <span style="white-space: pre-line; font-size:18px;">{{ token.text }}</span>
+                        {% endif %}
+                    {% endfor %}
+                    </span>
                 {% endfor %}
               </div>
             </div>
