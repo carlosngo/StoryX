@@ -114,7 +114,7 @@ class DialogueExtractor:
                 # line breaks are empty if stripped
 
                 if not token.text.strip() and self.doc.text[self.doc[next_index].idx - 1] == '\n':
-                    print(self.doc[next_index].sent.text + ' is a continuation')
+                    # print(self.doc[next_index].sent.text + ' is a continuation')
                     has_break = True
                     break
                     
@@ -122,11 +122,10 @@ class DialogueExtractor:
                 # if there is no dialogue continuation, next double quotes is a closing double quotes
                 processed[i + 1] = True
         
-        print('content done')
         for i in range(len(arr)):
             first_token = self.doc[arr[i][0] + 1]
             last_token = self.doc[arr[i][1] - 1]
-            print(first_token.sent.text)
+            # print(first_token.sent.text)
             sentence_start = SpacyUtil.get_sentence_index(first_token.sent)
             sentence_end = SpacyUtil.get_sentence_index(last_token.sent) + 1
             event = Event(
@@ -162,20 +161,23 @@ class DialogueExtractor:
                 speaker_verb = previous_word
                 # print(speaker_verb.text)
                 speaker_noun = SpacyUtil.get_subject(speaker_verb)
-                # print(self.doc[dialogue.content_start:dialogue.content_end].text)
+                print(self.doc[dialogue.content_start:dialogue.content_end].text)
                 while speaker_noun is None:
                     while (
                         speaker_verb.head.pos_ != 'VERB' 
                         and speaker_verb.head.pos_ != 'AUX'
                     ):
-                        # print(speaker_verb.head.text)
                         speaker_verb = speaker_verb.head
-                    # print(speaker_verb.text)
+                    print(speaker_verb.text)
                     speaker_verb = speaker_verb.head
                     speaker_noun = SpacyUtil.get_subject(speaker_verb)
                     if speaker_noun is None:
                         speaker_noun = SpacyUtil.get_object(speaker_verb)
 
+                    if speaker_verb.head == speaker_verb:
+                        break
+                if speaker_noun is None:
+                    continue
                 speaker_noun_chunk = SpacyUtil.get_noun_chunk(speaker_noun)
                 speaker = self.get_speaker(speaker_noun_chunk.start, speaker_noun_chunk.end)
                 if speaker is None:
@@ -190,7 +192,7 @@ class DialogueExtractor:
                 dialogue.event.characters.add(speaker)
                 # dialogue.event.actor_start = speaker_noun_chunk.start
                 # dialogue.event.actor_end = speaker_noun_chunk.end
-
+        print('done first format')
         # Second format
         for i in range(len(self.dialogues) - 1, -1, -1) :
             dialogue = self.dialogues[i]
@@ -293,7 +295,7 @@ class DialogueExtractor:
                         next_dialogue.event.characters.add(speaker)
                         # next_dialogue.event.actor_start = speaker_noun_chunk.start
                         # next_dialogue.event.actor_end = speaker_noun_chunk.end
-    
+        print('done second format')
         # Third format
         for i in range(len(self.dialogues)):
             current_dialogue = self.dialogues[i]
@@ -337,6 +339,7 @@ class DialogueExtractor:
                     current_dialogue.event.characters.add(speaker)
                     # current_dialogue.event.actor_start = speaker_start
                     # current_dialogue.event.actor_end = speaker_end
+        print('done speakers')
 
     def resolve_speakers(self, mention_entity_dict):
         # length = len(self.speakers)
