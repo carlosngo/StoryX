@@ -35,9 +35,10 @@ class ScreenplayGenerator:
     def generate_tex_body(self):
         str_body = ''
         for scene in self.story.scene_set.all().order_by('scene_number'):
+            
             # scene_str = "\n\CUT TO SCENE {}\n\n".format(scene.scene_number)
             scene_str = "\n\n\\begin{flushright}CUT TO:\\end{flushright}\n\n"
-            
+            scene_str += "\n\nScene {}\n\n".format(scene.scene_number)
             for event in scene.event_set.all().order_by('event_number'):
                 if hasattr(event, 'dialogueevent'):
                     scene_str += self.generate_tex_dialogue(event)
