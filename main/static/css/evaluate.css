@@ -110,3 +110,23 @@
     width:1em;
     height:1em;
 }
+
+.dialogue {
+    background-color: greenyellow;
+}
+
+.action {
+    background-color: white;
+}
+
+.transition {
+    background-color: yellow;
+}
+
+.character {
+    color: red;
+}
+
+.prop {
+    color: blue;
+}
