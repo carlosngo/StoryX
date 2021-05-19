@@ -112,7 +112,7 @@ def evaluate(request, id):
         extraction_evaluator = ExtractionEvaluator(story)
         extraction_evaluator.evaluate_extraction()
     except FileNotFoundError:
-        return render(request, 'evaluate_test.html', {
+        return render(request, 'evaluate.html', {
             'story': story,
             'sentences': story_presenter.sentences,
             'has_annotation': False,
@@ -120,7 +120,7 @@ def evaluate(request, id):
 
     score_labels = ['Precision', 'Recall', 'F1 Score']
 
-    return render(request, 'evaluate_test.html', {
+    return render(request, 'evaluate.html', {
         'story': story,
         'sentences': story_presenter.sentences,
         'dialogue_content_score': list(zip(score_labels, extraction_evaluator.dialogue_content_score)),

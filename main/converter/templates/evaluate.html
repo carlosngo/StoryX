@@ -11,8 +11,8 @@
             integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
             crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-        <!-- {% load static %} -->
-        <!-- <script src="{% static 'js/evaluate.js' %}"></script> -->
+        {% load static %}
+        <script src="{% static 'js/evaluate.js' %}"></script>
         <link rel="stylesheet" type="text/css" href="{% static 'css/evaluate.css' %}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -23,7 +23,7 @@
         <div class="container">
           <div class="row">
             <div class="col">
-              <div class="sticky-top">
+              <div>
                 <div>&nbsp;</div>
                 <h2>{{ story.title }}</h2>
                 <h4 class="pt-2 border-top border-dark">
@@ -52,187 +52,97 @@
                       <div class="d-flex justify-content-between">
                         <h5>Dialogue Content Evaluation</h5>
                       </div>
-                      <div class="prog-row dialogue-content">
-                        <div class="prog-obj precision">
-                          <div class="prog-label">Precision</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
+                      
+                      <div class="prog-row">
+                        {% for label, score in dialogue_content_score %}
+                        <div class="prog-obj">
+                            <div class="prog-label">{{ label }}</div>
+                            <div class="prog-contain">
+                              <div class="prog">{{ score }}</div>
+                            </div>
                         </div>
-                        <div class="prog-obj recall">
-                          <div class="prog-label">Recall</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
-                        </div>
-                        <div class="prog-obj f1score">
-                          <div class="prog-label">F1</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
-                        </div>
+                        {% endfor %}
                       </div>
-                      <div class="d-flex justify-content-between">
-                        <h5>Extracted Dialogue Content</h5>
-                        <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
-                      </div>
-                      <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
                       <br>
                     </div>
                     <div>
                       <div class="d-flex justify-content-between">
                         <h5>Dialogue Speaker Evaluation</h5>
                       </div>
-                      <div class="prog-row characters">
-                        <div class="prog-obj precision">
-                          <div class="prog-label">Precision</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
+                      <div class="prog-row">
+                        {% for label, score in dialogue_speaker_score %}
+                        <div class="prog-obj">
+                            <div class="prog-label">{{ label }}</div>
+                            <div class="prog-contain">
+                              <div class="prog">{{ score }}</div>
+                            </div>
                         </div>
-                        <div class="prog-obj recall">
-                          <div class="prog-label">Recall</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
-                        </div>
-                        <div class="prog-obj f1score">
-                          <div class="prog-label">F1</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
-                        </div>
+                        {% endfor %}
                       </div>
-                      <div class="d-flex justify-content-between">
-                        <h5>Extracted Dialogue Speakers</h5>
-                        <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
-                      </div>
-                      <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
                       <br>
                     </div>
                     <div>
                       <div class="d-flex justify-content-between">
                         <h5>Character Evaluation</h5>
                       </div>
-                      <div class="prog-row characters">
-                        <div class="prog-obj precision">
-                          <div class="prog-label">Precision</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
+                      <div class="prog-row">
+                        {% for label, score in character_score %}
+                        <div class="prog-obj">
+                            <div class="prog-label">{{ label }}</div>
+                            <div class="prog-contain">
+                              <div class="prog">{{ score }}</div>
+                            </div>
                         </div>
-                        <div class="prog-obj recall">
-                          <div class="prog-label">Recall</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
-                        </div>
-                        <div class="prog-obj f1score">
-                          <div class="prog-label">F1</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
-                        </div>
+                        {% endfor %}
                       </div>
-                      <div class="d-flex justify-content-between">
-                        <h5>Extracted Characters</h5>
-                        <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
-                      </div>
-                      <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
                       <br>
                     </div>
                     <div>
                       <div class="d-flex justify-content-between">
                         <h5>Prop Evaluation</h5>
                       </div>
-                      <div class="prog-row props">
-                        <div class="prog-obj precision">
-                          <div class="prog-label">Precision</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
+                      <div class="prog-row">
+                        {% for label, score in prop_score %}
+                        <div class="prog-obj">
+                            <div class="prog-label">{{ label }}</div>
+                            <div class="prog-contain">
+                              <div class="prog">{{ score }}</div>
+                            </div>
                         </div>
-                        <div class="prog-obj recall">
-                          <div class="prog-label">Recall</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
-                        </div>
-                        <div class="prog-obj f1score">
-                          <div class="prog-label">F1</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
-                        </div>
+                        {% endfor %}
                       </div>
-                      <div class="d-flex justify-content-between">
-                        <h5>Extracted Props</h5>
-                        <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
-                      </div>
-                      <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
                       <br>
                     </div>
                     <div>
                       <div class="d-flex justify-content-between">
                         <h5>Action Line Evaluation</h5>
                       </div>
-                      <div class="prog-row action-lines">
-                        <div class="prog-obj precision">
-                          <div class="prog-label">Precision</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
+                      <div class="prog-row">
+                        {% for label, score in action_score %}
+                        <div class="prog-obj">
+                            <div class="prog-label">{{ label }}</div>
+                            <div class="prog-contain">
+                              <div class="prog">{{ score }}</div>
+                            </div>
                         </div>
-                        <div class="prog-obj recall">
-                          <div class="prog-label">Recall</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
-                        </div>
-                        <div class="prog-obj f1score">
-                          <div class="prog-label">F1</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
-                        </div>
+                        {% endfor %}
                       </div>
-                      <div class="d-flex justify-content-between">
-                        <h5>Extracted Action Lines</h5>
-                        <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
-                      </div>
-                      <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
                       <br>
                     </div>
                     <div>
                       <div class="d-flex justify-content-between">
                         <h5>Scene Transition Evaluation</h5>
-                        <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
                       </div>
-                      <div class="prog-row scene-transitions">
-                        <div class="prog-obj precision">
-                          <div class="prog-label">Precision</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
+                      <div class="prog-row">
+                        {% for label, score in transition_score %}
+                        <div class="prog-obj">
+                            <div class="prog-label">{{ label }}</div>
+                            <div class="prog-contain">
+                              <div class="prog">{{ score }}</div>
+                            </div>
                         </div>
-                        <div class="prog-obj recall">
-                          <div class="prog-label">Recall</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
-                        </div>
-                        <div class="prog-obj f1score">
-                          <div class="prog-label">F1</div>
-                          <div id="prog-contain">
-                            <div class="prog"></div>
-                          </div>
-                        </div>
+                        {% endfor %}
                       </div>
-                      <div class="d-flex justify-content-between">
-                        <h5>Extracted Scene Transitions</h5>
-                        <button type="button" class="btn btn-light" id="btn-copy"><i class="fa fa-clipboard mr-2"></i>Copy to Clipboard</button>
-                      </div>
-                      <textarea class="form-control mt-2" rows=5 id="output" readonly></textarea>
                       <br>
                     </div>
                 </div>

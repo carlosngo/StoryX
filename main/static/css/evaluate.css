@@ -5,7 +5,7 @@
     border-radius: 20px;
     padding-bottom: 10px;
     margin-bottom: 15px;
-    justify-content: center;
+    justify-content: space-evenly;
 }
 
 .prog-obj {
@@ -74,16 +74,16 @@
 .prog > .percent > p{
     margin-top: 10px;
 }
-.prog > #slice {
+.prog > .slice {
     position:absolute;
     width:1em;
     height:1em;
     clip:rect(0px,1em,1em,0.5em);
 }
-.prog > #slice.gt50 {
+.prog > .slice.gt50 {
     clip:rect(auto, auto, auto, auto);
 }
-.prog > #slice > .pie {
+.prog > .slice > .pie {
     border: .1em solid #9a3e3e;
     position:absolute;
     width:0.8em; /* 1 - (2 * border width) */
@@ -93,7 +93,7 @@
     -webkit-border-radius:0.5em; 
     border-radius:0.5em;
 }
-.prog > #slice > .pie.fill {
+.prog > .slice > .pie.fill {
     -moz-transform:rotate(180deg) !important;
     -webkit-transform:rotate(180deg) !important;
     -o-transform:rotate(180deg) !important;
@@ -102,7 +102,7 @@
 .prog.fill > .percent {
     display: none;
 }
-.prog.fill > #slice > .pie {
+.prog.fill > .slice > .pie {
     border: transparent;
     width:1em;
     height:1em;
