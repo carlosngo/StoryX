@@ -1,54 +1,114 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>StoryX Home</title>   
-    </head>
-    <body>
-    <!-- List of uploaded documents -->
-        <h1>Stories</h1>
-    {% if stories %}
-        <table>
-            <tr>
-                <th>Story Title</th>
-                <th>Story Author</th>
-                <th>Actions</th>
-            </tr>
-            
-        {% for story in stories %}
-            <tr>
-                <td>{{ story.title }}</td>
-                <td>{{ story.author }}</td>
-                <td>
-                    <a href="{{ story.get_txt_url }}">View raw text</a>
-                    <a href="{{ story.get_evaluation_url}}">View extraction results</a>
-                    <a href="{{ story.get_annotation_url }}">Annotate</a>
-                    <a href="{{ story.get_screenplay_url }}">View screenplay</a>
-                </td>
-            </tr>
-        {% endfor %}
-        </table>
-    {% else %}
-        <p>No stories uploaded.</p>
-    {% endif %}
-        <h1>Upload Story</h1>
-        <!-- Upload form. Note enctype attribute! -->
-        <form action="{% url 'stories' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <table>
-            {% for field in form %}
-                <tr>
-                    <td>{{field.label_tag}}</td>
-                    <td>{{field}}</td>
-                    <td>
-                    {% for error in field.errors %}
-                        <div style="color: red">{{ error }}</div>
-                    {% endfor %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </table>
-            <p><input type="submit" value="Upload" /></p>
-        </form>
-    </body>
-</html> 
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>StoryX</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cabin:700">
+    <link rel="stylesheet" href="{% static 'css/GFS%20Didot.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Jura.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/stories.css' %}">
+    <link rel="stylesheet" href="{% static 'css/untitled.css' %}">
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/stories.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="{% static 'js/grayscale.js' %}"></script>
+    <script src="{% static 'js/Sidebar-Menu.js' %}"></script>
+    <!-- <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cabin:700">
+    <link rel="stylesheet" href="assets/css/GFS%20Didot.css">
+    <link rel="stylesheet" href="assets/css/Jura.css">
+    <link rel="stylesheet" href="assets/css/sidebar.css">
+    <link rel="stylesheet" href="assets/css/untitled.css"> -->
+</head>
+
+<body id="page-top">
+    <header class="masthead indexBG">
+    <!-- <header class="masthead" style="background: url(&quot;assets/img/First%20Screen%20bw.png&quot;);background-repeat: no-repeat;background-size: cover;"> -->
+        <div class="intro-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto">
+                        <p style="font-size: 90px;text-align: center;margin: 0px;font-family: 'GFS Didot', serif;color: rgb(255,255,255);">S&nbsp; t&nbsp; o&nbsp; r&nbsp; y&nbsp; X</p>
+                    </div>
+                </div>
+                <form id="upload-story-form" action="{% url 'stories' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-lg-8 mx-auto">
+                            <div class="align-items-center" id="centerBox" style="margin: 30px 125px;padding: 10px;"> 
+                                {% for field in form %}
+                                <div class="row">
+                                    <div class="col">
+                                        {{ field.label_tag }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        {{ field }}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-8 mx-auto"><input type="submit" value="Generate Screenplay"/></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <header>
+        <div class="wrap">
+          <h2 style="font-size: 32px;text-align: center;margin: 0px;font-family: 'GFS Didot', serif;color: rgb(255,255,255);">S T O R I E S</h2>
+        </div>
+      </header>
+
+    <div class="intro-body indexBG">
+        <div class="container">
+            <div class="row">
+                <div class="mx-auto">
+                    <br/>
+                    {% if stories %}
+                    <ul style="list-style-type: none;text-align:right">
+                        {% for story in stories %}
+                        <li class="noStyle">  
+                            <div>
+                                
+                                <span>{{ story.title }}</span>
+                                <a href="{{ story.get_annotation_url }}" class="btn" style="width: fit-content;">Annotate</a> 
+                                <a href="{{ story.get_txt_url }}" class="btn" style="width: fit-content;">View Raw Text</a> 
+                                <a href="{{ story.get_evaluation_url }}" class="btn" style="width: fit-content;">View Extraction Results</a>
+                                <a href="{{ story.get_screenplay_url }}" class="btn" style="width: fit-content;">View Screenplay</a> 
+                                
+                            </div>
+                        </li>   
+                        {% endfor %}             
+                    </ul>
+                    {% else %}
+                        <p>No stories uploaded.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="assets/js/grayscale.js"></script>
+    <script src="assets/js/pdf.js"></script>
+    <script src="assets/js/pdfViewer.js"></script>
+    <script src="assets/js/Sidebar-Menu.js"></script> -->
+</body>
+
+</html>
