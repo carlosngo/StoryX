@@ -10,6 +10,7 @@ from converter.pipeline.element_extractor import ElementExtractor
 from converter.pipeline.annotation_helper import AnnotationHelper
 from converter.pipeline.screenplay_generator import ScreenplayGenerator
 from converter.pipeline.extraction_evaluator import ExtractionEvaluator
+from converter.pipeline.story_presenter import StoryPresenter
 
 import requests
 import os
@@ -104,22 +105,29 @@ def screenplay_pdf(request, id):
 def evaluate(request, id):
     story = get_object_or_404(Story, id=id)
 
-    extraction_evaluator = ExtractionEvaluator(story)
+    story_presenter = StoryPresenter(story)
+    story_presenter.process()
 
-    extraction_evaluator.evaluate_extraction()
+    try:
+        extraction_evaluator = ExtractionEvaluator(story)
+        extraction_evaluator.evaluate_extraction()
+    except FileNotFoundError:
+        return render(request, 'evaluate_test.html', {
+            'story': story,
+            'sentences': story_presenter.sentences,
+            'has_annotation': False,
+        })
 
     score_labels = ['Precision', 'Recall', 'F1 Score']
 
     return render(request, 'evaluate_test.html', {
-        'title': story.title,
+        'story': story,
+        'sentences': story_presenter.sentences,
         'dialogue_content_score': list(zip(score_labels, extraction_evaluator.dialogue_content_score)),
         'dialogue_speaker_score': list(zip(score_labels, extraction_evaluator.dialogue_speaker_score)),
         'character_score': list(zip(score_labels, extraction_evaluator.character_score)),
         'prop_score': list(zip(score_labels, extraction_evaluator.prop_score)),
         'action_score': list(zip(score_labels, extraction_evaluator.action_score)), 
         'transition_score': list(zip(score_labels, extraction_evaluator.transition_score)), 
+        'has_annotation': True,
     })
-    
-
-
-

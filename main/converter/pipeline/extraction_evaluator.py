@@ -289,13 +289,31 @@ class ExtractionEvaluator:
     # Recall = TruePositives / (TruePositives + FalseNegatives)
     # F-Measure = (2 * Precision * Recall) / (Precision + Recall)   
     def evaluate(self, tp, fp, fn):
-        precision = 1.0 * tp / (tp + fp)
-        recall = 1.0 * tp / (tp + fn)
-        f1 = (2 * precision * recall) / (precision + recall)
+        if tp + fp == 0:
+            precision = 0
+        else:
+            precision = 1.0 * tp / (tp + fp)
+        if tp + fn == 0:
+            recall = 0
+        else:
+            recall = 1.0 * tp / (tp + fn)
+        if precision + recall == 0:
+            f1 = 0
+        else:
+            f1 = (2 * precision * recall) / (precision + recall)
         return precision, recall, f1
 
     def evaluate_bianca(self, perfect, lacking, excess, missing, wrong):
-        precision = (perfect + lacking + excess) / (perfect + lacking + excess + wrong)
-        recall = (perfect + lacking + excess) / (perfect + lacking + excess + missing)
-        f1 = (2 * precision * recall) / (precision + recall)
+        if perfect + lacking + excess + wrong == 0:
+            precision = 0
+        else:
+            precision = (perfect + lacking + excess) / (perfect + lacking + excess + wrong)
+        if perfect + lacking + excess + missing == 0:
+            recall = 0
+        else:
+            recall = (perfect + lacking + excess) / (perfect + lacking + excess + missing)
+        if precision + recall == 0:
+            f1 = 0
+        else:
+            f1 = (2 * precision * recall) / (precision + recall)
         return precision, recall, f1
