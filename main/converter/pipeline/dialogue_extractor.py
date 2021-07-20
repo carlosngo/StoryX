@@ -130,7 +130,8 @@ class DialogueExtractor:
             sentence_end = SpacyUtil.get_sentence_index(last_token.sent) + 1
             event = Event(
                 sentence_start = sentence_start, 
-                sentence_end = sentence_end
+                sentence_end = sentence_end,
+                is_transition = False,
             )
             dialogue_event = DialogueEvent(
                 event = event,

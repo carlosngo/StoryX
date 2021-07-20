@@ -43,10 +43,9 @@ class ExtractionEvaluator:
                 if hasattr(event, 'dialogueevent'):
                     self.dialogues.append(event)
                 elif hasattr(event, 'actionevent'):
-                    if hasattr(event.actionevent, 'transitionevent'):
-                        self.transitions.append(event)
-                    else:
-                        self.actions.append(event)
+                    self.actions.append(event)
+                if event.is_transition:
+                    self.transitions.append(event)
                         
         for entity in story.entity_set.all().order_by('reference_start'):
             if self.doc[entity.reference_end - 1].pos_ != 'PRON':

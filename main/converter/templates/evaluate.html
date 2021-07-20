@@ -151,10 +151,10 @@
             <div class="col my-4">
               <div>
                 {% for sentence in sentences %}
-                    {% if sentence.is_action %}
-                    <span class="action">
-                    {% elif sentence.is_transition %}
+                    {% if sentence.is_transition %}
                     <span class="transition">
+                    {% elif sentence.is_action %}
+                    <span class="action">
                     {% elif sentence.is_dialogue %}
                     <span class="dialogue">
                     {% else %}
@@ -170,6 +170,13 @@
                         {% endif %}
                     {% endfor %}
                     </span>
+                    {% if sentence.is_transition %}
+                    <br/>
+                    <br/>
+                    <span>CUT TO</span>
+                    <br/>
+                    <br/>
+                    {% endif %}
                 {% endfor %}
               </div>
             </div>

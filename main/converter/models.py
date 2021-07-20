@@ -105,6 +105,7 @@ class Event(models.Model):
     event_number = models.IntegerField(blank=True, null=True)
     sentence_start = models.IntegerField()
     sentence_end = models.IntegerField()
+    is_transition = models.BooleanField()
 
 class DialogueEvent(models.Model):
     event = models.OneToOneField(
@@ -122,12 +123,3 @@ class ActionEvent(models.Model):
         primary_key=True,
     )
     # verb = models.IntegerField()
-
-
-class TransitionEvent(models.Model):
-    action_event = models.OneToOneField(
-        ActionEvent,
-        on_delete=models.CASCADE,
-        primary_key=True
-    )
-

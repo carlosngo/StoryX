@@ -27,14 +27,13 @@ class StoryPresenter:
             cur_event = None
             for event in self.events:
                 if idx in range(event.sentence_start, event.sentence_end):
+                    if event.is_transition:
+                        sentence['is_transition'] = True
                     if hasattr(event, 'dialogueevent'):
                         sentence['is_dialogue'] = True
                         cur_event = event
                     elif hasattr(event, 'actionevent'):
-                        if hasattr(event.actionevent, 'transitionevent'):
-                            sentence['is_transition'] = True
-                        else:
-                            sentence['is_action'] = True
+                        sentence['is_action'] = True
             for i in range(sent.start, sent.end):
                 tkn = self.doc[i]
                 token = {

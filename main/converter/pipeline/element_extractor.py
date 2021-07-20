@@ -1,6 +1,6 @@
 import spacy
 
-from converter.models import Story, Scene, Event, DialogueEvent, ActionEvent, TransitionEvent, Entity, Character, Prop
+from converter.models import Story, Scene, Event, DialogueEvent, ActionEvent, Entity, Character, Prop
 from converter.pipeline.coref_resolver import CorefResolver
 from converter.pipeline.dialogue_extractor import DialogueExtractor
 from converter.pipeline.entity_extractor import EntityExtractor
@@ -58,8 +58,6 @@ class ElementExtractor:
             for event in scene.event_set.all().order_by('event_number'):
                 if hasattr(event, 'dialogueevent'):
                     event_type = 'dialogue'
-                elif hasattr(event, 'actionevent') and hasattr(event.actionevent, 'transitionevent'):
-                    event_type = 'scene transition'
                 else:
                     event_type = 'action line'
                     

@@ -44,8 +44,8 @@ class ScreenplayGenerator:
                     scene_str += self.generate_tex_dialogue(event)
                 elif hasattr(event, 'actionevent'):
                     scene_str += self.generate_tex_action(event)
-                else:
-                    scene_str += self.generate_tex_transition(event)
+                # if event.is_transition:
+                #     scene_str += self.generate_tex_transition(event)
             if scene_str.strip(' \n').count('\n') > 0:
                 str_body += scene_str
         

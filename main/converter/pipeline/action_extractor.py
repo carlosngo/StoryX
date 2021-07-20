@@ -1,6 +1,6 @@
 from converter.pipeline.concept_net import ConceptNet
 
-from converter.models import Scene, Event, DialogueEvent, ActionEvent, TransitionEvent, Entity, Prop, Character
+from converter.models import Scene, Event, DialogueEvent, ActionEvent, Entity, Prop, Character
 
 class ActionExtractor:
     # Event type values
@@ -51,6 +51,7 @@ class ActionExtractor:
             sentence_start = idx,
             sentence_end = idx + 1,
             event_number = self.seq,
+            is_transition = True,
         )
         event.save()
         # set scene and sequence ids
@@ -70,7 +71,7 @@ class ActionExtractor:
 
         self.scene_counter = self.scene_counter + 1
         
-        return TransitionEvent(action_event=ActionEvent(event=event))
+        return ActionEvent(event=event)
 
     def parse_action_sentence(self, sent, idx, sent_characters, sent_props):
         # create a Transition Event
@@ -78,6 +79,7 @@ class ActionExtractor:
             sentence_start = idx,
             sentence_end = idx + 1,
             event_number = self.seq,
+            is_transition = False,
         )
         event.save()
 
@@ -129,6 +131,7 @@ class ActionExtractor:
                 # event.set_scene_id = self.scene_counter
                 # event.type = ActionExtractor.EVENT_DIALOGUE
                 event.scene = scene
+                event.is_transition = False
                 event.save()
                 # print('found dialogue: ')
                 self.events.append(dialogue_events[self.d_idx])
@@ -182,9 +185,8 @@ class ActionExtractor:
 
                 if type == ActionExtractor.EVENT_TRANSITION:
                     event = self.parse_transition_sentence(sent, idx, sent_characters, sent_props)
-                    event.action_event.event.scene = scene
-                    event.action_event.event.save()
-                    event.action_event.save()
+                    event.event.scene = scene
+                    event.event.save()
                     event.save()
                     self.scenes.append(scene)
                     scene = Scene(story=self.story, scene_number=self.scene_counter)
@@ -223,13 +225,14 @@ class ActionExtractor:
             elif type(evt) == DialogueEvent:
                 event = evt.event
                 event_type = 'dialogue'
-            elif type(evt) == TransitionEvent:
-                event = evt.action_event.event
-                event_type = 'scene transition'
+            
             if (event.scene.scene_number != scene_number):
                 print(f'scene { event.scene.scene_number }:')
                 scene_number = event.scene.scene_number  
             print(f'event { event.event_number }: { event_type }')
+            if evt.event.is_transition:
+                
+                print('this event is a transition')
             
             
             for idx in range(event.sentence_start, event.sentence_end):
