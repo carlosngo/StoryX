@@ -18,7 +18,9 @@ class DialogueExtractor:
         self.dialogues = []
         self.speakers = []
         self.extract_content()
+        print('successfully extracted content')
         self.extract_speakers()
+        print('successfully extracted speakers')
         # for i in range(len(self.dialogues) - 1):
         #     cur = self.dialogues[i].event
         #     next = self.dialogues[i + 1].event
@@ -167,6 +169,7 @@ class DialogueExtractor:
                     while (
                         speaker_verb.head.pos_ != 'VERB' 
                         and speaker_verb.head.pos_ != 'AUX'
+                        and speaker_verb != speaker_verb.head
                     ):
                         speaker_verb = speaker_verb.head
                     print(speaker_verb.text)

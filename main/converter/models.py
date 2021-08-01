@@ -7,7 +7,8 @@ import uuid
 class Story(models.Model):
     def update_filename(instance, filename):
         path = "stories/"
-        filename = instance.title.replace(' ', '-').lower()
+        filename = instance.title
+        # filename = instance.title.replace(' ', '-').lower()
         format = filename + '.txt'
         return os.path.join(path, format)
 

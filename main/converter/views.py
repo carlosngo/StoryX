@@ -131,3 +131,25 @@ def evaluate(request, id):
         'transition_score': list(zip(score_labels, extraction_evaluator.transition_score)), 
         'has_annotation': True,
     })
+
+
+def extraction_results(request):
+    stories = Story.objects.all()
+    message = ''
+    for story in stories:
+        message += (f'processing {story.title}\n')
+        print(f'processing {story.title}\n')
+        try:
+            extraction_evaluator = ExtractionEvaluator(story)
+            extraction_evaluator.evaluate_extraction()
+            message += (f'dialogue_content_score: {extraction_evaluator.dialogue_content_score}\n')
+            message += (f'dialogue_speaker_score: {extraction_evaluator.dialogue_speaker_score}\n')
+            message += (f'character_score: {extraction_evaluator.character_score}\n')
+            message += (f'prop_score: {extraction_evaluator.prop_score}\n')
+            message += (f'action_score: {extraction_evaluator.action_score}\n')
+            message += (f'transition_score: {extraction_evaluator.transition_score}\n')
+        except FileNotFoundError:
+            message += (f'story has not been annotated\n')
+        message += ('\n')
+    return render(request, 'extraction_results.html', {'message': message})
+    

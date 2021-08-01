@@ -79,6 +79,9 @@
             <div class="row">
                 <div class="mx-auto">
                     <br/>
+                    <section>
+                        <a href="{% url 'extraction_results' %}" class="btn" style="width: fit-content;">View Extraction Overall Results</a> 
+                    </section>
                     {% if stories %}
                     <ul style="list-style-type: none;text-align:right">
                         {% for story in stories %}
