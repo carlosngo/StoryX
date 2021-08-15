@@ -26,5 +26,5 @@ srsly==1.0.5
 thinc==7.0.8
 tqdm==4.60.0
 typing-extensions==3.7.4.3
-urllib3==1.26.4
+urllib3==1.26.5
 wasabi==0.8.2
