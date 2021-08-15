@@ -2,6 +2,10 @@ corpus
 dltk
 env
 media
+questionnaire-responses
+screenshots
+*.pdf
+
 __pycache__/
 *.py[cod]
 

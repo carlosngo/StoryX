@@ -66,17 +66,23 @@ class ExtractionEvaluator:
         
 
     def evaluate_extraction(self):
-        
+        print('checking ' + (os.path.join(settings.ANNOTATION_ROOT, self.story.title.lower() + '_dialogues.txt')))
+        print('checking file for dialogue_content_score')
         file = open(os.path.join(settings.ANNOTATION_ROOT, self.story.title.lower() + '_dialogues.txt'), 'r')
         self.dialogue_content_score = self.evaluate_dialogue_content(file)
+        print('checking file for dialogue_speaker_score')
         file = open(os.path.join(settings.ANNOTATION_ROOT, self.story.title.lower() + '_dialogues.txt'), 'r')
         self.dialogue_speaker_score = self.evaluate_dialogue_speaker(file)
+        print('checking file for character_score')
         file = open(os.path.join(settings.ANNOTATION_ROOT, self.story.title.lower() + '_characters.txt'), 'r')
         self.character_score = self.evaluate_characters(file)
+        print('checking file for prop_score')
         file = open(os.path.join(settings.ANNOTATION_ROOT, self.story.title.lower() + '_props.txt'), 'r')
         self.prop_score = self.evaluate_props(file)
+        print('checking file for action_score')
         file = open(os.path.join(settings.ANNOTATION_ROOT, self.story.title.lower() + '_action lines.txt'), 'r')
         self.action_score = self.evaluate_actions(file)
+        print('checking file for transition_score')
         file = open(os.path.join(settings.ANNOTATION_ROOT, self.story.title.lower() + '_scene transitions.txt'), 'r')
         self.transition_score = self.evaluate_transitions(file)
 

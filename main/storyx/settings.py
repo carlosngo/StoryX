@@ -36,6 +36,16 @@ STORY_ROOT = os.path.join(MEDIA_ROOT, 'stories')
 SCREENPLAY_ROOT = os.path.join(MEDIA_ROOT, 'screenplays')
 
 ANNOTATION_ROOT = os.path.join(MEDIA_ROOT, 'annotations')
+
+RESPONSES_ROOT = os.path.join(BASE_DIR, 'questionnaire-responses')
+
+DLTK_RESPONSES_ROOT = os.path.join(RESPONSES_ROOT, 'dltk')
+MAIN_RESPONSES_ROOT = os.path.join(RESPONSES_ROOT, 'main')
+
+DLTK_STORY_RESPONSES_ROOT = os.path.join(DLTK_RESPONSES_ROOT, 'stories')
+MAIN_STORY_RESPONSES_ROOT = os.path.join(MAIN_RESPONSES_ROOT, 'stories')
+DLTK_SCREENPLAY_RESPONSES_ROOT = os.path.join(DLTK_RESPONSES_ROOT, 'screenplays')
+MAIN_SCREENPLAY_RESPONSES_ROOT = os.path.join(MAIN_RESPONSES_ROOT, 'screenplays')
 # Application definition
 
 INSTALLED_APPS = [

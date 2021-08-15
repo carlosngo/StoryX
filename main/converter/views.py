@@ -10,6 +10,7 @@ from converter.pipeline.element_extractor import ElementExtractor
 from converter.pipeline.annotation_helper import AnnotationHelper
 from converter.pipeline.screenplay_generator import ScreenplayGenerator
 from converter.pipeline.extraction_evaluator import ExtractionEvaluator
+from converter.pipeline.understanding_evaluator import UnderstandingEvaluator
 from converter.pipeline.story_presenter import StoryPresenter
 
 import requests
@@ -135,21 +136,150 @@ def evaluate(request, id):
 
 def extraction_results(request):
     stories = Story.objects.all()
-    message = ''
+    dltk_titles = {
+        "Gingerbread Man",
+        "Little Red Hen",
+        "Moon Maiden",
+        "Stone Soup",
+        "The Emperor's New Clothes",
+        "Thumbelina",
+        "Beauty and the Beast",
+        "Cinderella",
+        "Jack and the Beanstalk",
+        "Little Red Riding Hood",
+        "Sleeping Beauty",
+        "The Little Mermaid",
+        "The Three Little Pigs",
+        "Aladdin and the Wonderful Lamp",
+        "Frog Prince",
+        "Hansel and Gretel",
+        "Puss in Boots",
+        "Rapunzel",
+        "Rumpelstiltskin",
+        "Snow White and the Seven Dwarves",
+        "The Ugly Duckling",
+        "Goldilocks and the Three Bears",
+        "Marie and the Orange Fish",
+        "Molly Murphy and the Scorched Leprechaun",
+        "Sedna",
+        "The Story of Arachne, the Weaver",
+        "The Story of Icarus",
+        "The Story of Medusa and Athena",
+        "Theseus and the Minotaur",
+        "The Story of Prometheus' Fire",
+    }
+
+    extraction_results = {
+        "agg": {
+            "Dialogue Content": [0, 0, 0],
+            "Dialogue Speaker": [0, 0, 0],
+            "Character": [0, 0, 0],
+            "Prop": [0, 0, 0],
+            "Action Line": [0, 0, 0],
+            "Scene Transition": [0, 0, 0],
+        },
+        "corpus": {
+            "dltk": {
+                "stories": [],
+                "agg": {
+                    "Dialogue Content": [0, 0, 0],
+                    "Dialogue Speaker": [0, 0, 0],
+                    "Character": [0, 0, 0],
+                    "Prop": [0, 0, 0],
+                    "Action Line": [0, 0, 0],
+                    "Scene Transition": [0, 0, 0],
+                }
+            },
+            "main": {
+                "stories": [],
+                "agg": {
+                    "Dialogue Content": [0, 0, 0],
+                    "Dialogue Speaker": [0, 0, 0],
+                    "Character": [0, 0, 0],
+                    "Prop": [0, 0, 0],
+                    "Action Line": [0, 0, 0],
+                    "Scene Transition": [0, 0, 0],
+                }
+            }
+        }
+
+    }
     for story in stories:
-        message += (f'processing {story.title}\n')
-        print(f'processing {story.title}\n')
+        story_results = {
+            "elements": {}
+        }
+        story_results["title"] = story.title
+
         try:
             extraction_evaluator = ExtractionEvaluator(story)
             extraction_evaluator.evaluate_extraction()
-            message += (f'dialogue_content_score: {extraction_evaluator.dialogue_content_score}\n')
-            message += (f'dialogue_speaker_score: {extraction_evaluator.dialogue_speaker_score}\n')
-            message += (f'character_score: {extraction_evaluator.character_score}\n')
-            message += (f'prop_score: {extraction_evaluator.prop_score}\n')
-            message += (f'action_score: {extraction_evaluator.action_score}\n')
-            message += (f'transition_score: {extraction_evaluator.transition_score}\n')
+            story_results['elements']["Dialogue Content"] = extraction_evaluator.dialogue_content_score
+            story_results['elements']["Dialogue Speaker"] = extraction_evaluator.dialogue_speaker_score
+            story_results['elements']["Character"] = extraction_evaluator.character_score
+            story_results['elements']["Prop"] = extraction_evaluator.prop_score
+            story_results['elements']["Action Line"] = extraction_evaluator.action_score
+            story_results['elements']["Scene Transition"] = extraction_evaluator.transition_score
         except FileNotFoundError:
-            message += (f'story has not been annotated\n')
-        message += ('\n')
-    return render(request, 'extraction_results.html', {'message': message})
+            pass
+        if story.title in dltk_titles:
+            extraction_results["corpus"]['dltk']["stories"].append(story_results)
+        else:
+            extraction_results["corpus"]['main']["stories"].append(story_results)
+
+        
+    for corpus in extraction_results['corpus']:
+        agg = {
+            "Dialogue Content": [0, 0, 0],
+            "Dialogue Speaker": [0, 0, 0],
+            "Character": [0, 0, 0],
+            "Prop": [0, 0, 0],
+            "Action Line": [0, 0, 0],
+            "Scene Transition": [0, 0, 0],
+        }
+        stories = extraction_results['corpus'][corpus]['stories']
+        for element in agg:
+            for i in range(3):
+                for j in range(len(stories)):
+                    try:
+                        agg[element][i] += stories[j]['elements'][element][i]
+                    except KeyError:
+                        pass
+
+                agg[element][i] /= len(stories)
+            
+        extraction_results['corpus'][corpus]['agg'] = agg
+    agg = {
+        "Dialogue Content": [0, 0, 0],
+        "Dialogue Speaker": [0, 0, 0],
+        "Character": [0, 0, 0],
+        "Prop": [0, 0, 0],
+        "Action Line": [0, 0, 0],
+        "Scene Transition": [0, 0, 0],
+    }
+    
+    for element in agg:
+        for i in range(3):
+            for corpus in extraction_results['corpus']:
+                agg[element][i] += extraction_results['corpus'][corpus]['agg'][element][i]
+            agg[element][i] /= 2
+    total = [0.0, 0.0, 0.0]
+    for i in range(3):
+        for element in agg:
+            total[i] += agg[element][i]
+        total[i] /= len(agg)
+    
+        
+    extraction_results['agg'] = agg
+    extraction_results['total'] = total
+    print(extraction_results)
+    return render(request, 'extraction_results.html', {'extraction_results': extraction_results})
+
+def understanding_results(request):
+    understanding_evaluator = UnderstandingEvaluator()
+    understanding_results = understanding_evaluator.evaluate_understanding()
+    print(understanding_results['agg'])
+    return render(request, "understanding_results.html", {
+        "understanding_results": understanding_results,
+    })
+
     

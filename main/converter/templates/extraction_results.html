@@ -22,7 +22,124 @@
 </head>
 
 <body>
-    Hello World!
+    <section class="container">
+        <h3>Overall Results:</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1 Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align:right;">{{ extraction_results.total.0 | floatformat:4 }}</td>
+                    <td style="text-align:right;">{{ extraction_results.total.1 | floatformat:4 }}</td>
+                    <td style="text-align:right;">{{ extraction_results.total.2 | floatformat:4 }}</td>
+                </tr>
+                
+            </tbody>
+        </table>
+
+        <h4>Per Story Element</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Story Element</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1 Score</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for element, metrics in extraction_results.agg.items %}
+                <tr>
+                    <td>{{ element }}</td>
+                    {% for score in metrics %}
+                    <td style="text-align:right;">{{ score | floatformat:4 }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    <section class="container">
+        <h3>DLTK Results:</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Story Element</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1 Score</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for element, metrics in extraction_results.corpus.dltk.agg.items %}
+                <tr>
+                    <td>{{ element }}</td>
+                    {% for score in metrics %}
+                    <td style="text-align:right;">{{ score | floatformat:4 }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    <section class="container">
+        <h3>Main Corpus Results:</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Story Element</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1 Score</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for element, metrics in extraction_results.corpus.main.agg.items %}
+                <tr>
+                    <td>{{ element }}</td>
+                    {% for score in metrics %}
+                    <td style="text-align:right;">{{ score | floatformat:4 }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    <section class="container">
+        <h3>All Results:</h3>
+        {% for corpus, values in extraction_results.corpus.items %}
+        <h4>Results for {{ corpus }} corpus stories</h4>
+        {% for story in values.stories %}
+        <h5>Results for {{ story.title }}</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Story Element</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1 Score</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for element, metrics in story.elements.items %}
+                <tr>
+                    <td>{{ element }}</td>
+                    {% for score in metrics %}
+                    <td style="text-align:right;">{{ score | floatformat:4 }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+        
+        {% endfor %}
+    </section>
 </body>
 
 </html>

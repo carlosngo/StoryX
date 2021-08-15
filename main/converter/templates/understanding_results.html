@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>StoryX</title>
+    {% load static %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script
+        src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    {% load static %}
+    <script src="{% static 'js/extraction_results.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/extraction_results.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+</head>
+
+<body>
+    <div class="container">
+        <h3>Overall Results:</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Simple Matching Coefficient</th>
+                    <th>Jaccard's Coefficient</th>
+                    <th>Cosine Similarity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align:right;">{{ understanding_results.total.avg_smc | floatformat:4 }}</td>
+                    <td style="text-align:right;">{{ understanding_results.total.avg_jc | floatformat:4 }}</td>
+                    <td style="text-align:right;">{{ understanding_results.total.avg_cs | floatformat:4 }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <h4>Per story element</h4> 
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Story Element</th>
+                    <th>Simple Matching Coefficient</th>
+                    <th>Jaccard's Coefficient</th>
+                    <th>Cosine Similarity</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for element, metric in understanding_results.agg.items %}
+                <tr>
+                    <td>{{ element }}</td>
+                    {% for key, value in metric.items %}
+                    <td style="text-align:right;">{{ value | floatformat:4 }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <h3>DLTK Results:</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Story Element</th>
+                    <th>Simple Matching Coefficient</th>
+                    <th>Jaccard's Coefficient</th>
+                    <th>Cosine Similarity</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for element, metric in understanding_results.corpus.dltk.agg.items %}
+                <tr>
+                    <td>{{ element }}</td>
+                    {% for key, value in metric.items %}
+                    <td style="text-align:right;">{{ value | floatformat:4 }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <h3>Main Corpus Results:</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Story Element</th>
+                    <th>Simple Matching Coefficient</th>
+                    <th>Jaccard's Coefficient</th>
+                    <th>Cosine Similarity</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for element, metric in understanding_results.corpus.main.agg.items %}
+                <tr>
+                    <td>{{ element }}</td>
+                    {% for key, value in metric.items %}
+                    <td style="text-align:right;">{{ value | floatformat:4 }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <h3>All Results:</h3>
+            <h4>Results for DLTK corpus stories</h4>
+            {% for story in understanding_results.corpus.dltk.stories %}
+            <h5>Results for {{ story.filename }}</h5>    
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Story Element</th>
+                        <th>Simple Matching Coefficient</th>
+                        <th>Jaccard's Coefficient</th>
+                        <th>Cosine Similarity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                {% for element, metric in story.elements.items %}
+                    <tr>
+                        <td>{{ element }}</td>
+                        {% for key, value in metric.items %}
+                        <td style="text-align:right;">{{ value | floatformat:4 }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endfor %}
+            <h4>Results for Main Corpus stories</h4>
+            {% for story in understanding_results.corpus.main.stories %}
+            <h5>Results for {{ story.filename }}</h5>    
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Story Element</th>
+                        <th>Simple Matching Coefficient</th>
+                        <th>Jaccard's Coefficient</th>
+                        <th>Cosine Similarity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                {% for element, metric in story.elements.items %}
+                    <tr>
+                        <td>{{ element }}</td>
+                        {% for key, value in metric.items %}
+                        <td style="text-align:right;">{{ value | floatformat:4 }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endfor %}
+        
+    </div>
+</body>
+
+</html>

@@ -199,13 +199,15 @@ class EntityExtractor:
     def to_string(self, entity):
         s = ''
         for i in range(entity.reference_start, entity.reference_end):
-            s = s + self.doc[i].text_with_ws
+            if i < len(self.doc):
+                s = s + self.doc[i].text_with_ws
         return s    
     
     def to_string(entity, doc):
         s = ''
         for i in range(entity.reference_start, entity.reference_end):
-            s = s + doc[i].text_with_ws
+            if i < len(doc):
+                s = s + doc[i].text_with_ws
         return s    
 
     def get_character(self, start, end):
