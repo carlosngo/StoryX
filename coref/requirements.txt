@@ -21,7 +21,7 @@ requests==2.25.1
 s3transfer==0.4.2
 six==1.15.0
 spacy==2.1.0
-sqlparse==0.4.1
+sqlparse==0.4.2
 srsly==1.0.5
 thinc==7.0.8
 tqdm==4.60.0
