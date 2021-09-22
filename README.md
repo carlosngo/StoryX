@@ -1,27 +1,35 @@
-# StoryX
-A Django web application that uses spaCy NLP libraries to generate a screenplay document from a short story. 
+# Software Technology Department, Undergraduate Thesis Program
 
-Written for a thesis in partial fulfillment of the requirements for the degree of Bachelor of Science in Computer Science by
+## Converting Short Stories Into Screenplays Through Abstract Story Representation
 
-Garay, Kathleen Nicole<br/>
-Kang, Jude Evan<br/>
-Ngo, Carlos Miguel<br/>
-Villaroman, Ma. Patricia<br/>
+<div style="font-size: 1.17em;">Thesis Proponents</div>
 
-Advised by Ryan Austin Fernandez
+| | | | | |
+| ----------- | ----------- | ----------- | ----------- | ----------- | 
+| <h3> ![Picture of Nicole](https://github.com/Losinek.png?size=150) </h3> | <h3> ![Picture of Jude](https://github.com/jude842.png?size=150) </h3> | <h3> ![Picture of Carlos](https://github.com/carlosngo.png?size=150) </h3> | <h3> ![Picture of Shasha](https://github.com/ShashaVillaroman.png?size=150) </h3> | <h3><img src="https://media.discordapp.net/attachments/674171433705799685/889074944154161152/unknown.png" alt="Picture of Austin" width="150"/> </h3> |
+| Garay, Kathleen Nicole | Kang, Jude Evander | Ngo, Carlos Miguel | Villaroman, Ma. Patricia | Fernandez, Ryan Austin |
+| Undergraduate Student | Undergraduate Student | Undergraduate Student | Undergraduate Student | Thesis Adviser |
 
-# Quick Links
-
-- [StoryX](#storyx)
-- [Quick Links](#quick-links)
-- [Pre-requisites](#pre-requisites)
-- [How to run the project](#how-to-run-the-project)
+## Table of Contents
+- [Software Technology Department, Undergraduate Thesis Program](#software-technology-department-undergraduate-thesis-program)
+  - [Converting Short Stories Into Screenplays Through Abstract Story Representation](#converting-short-stories-into-screenplays-through-abstract-story-representation)
+  - [Table of Contents](#table-of-contents)
+- [System Overview](#system-overview)
+  - [System Features](#system-features)
+    - [Convert Story to Screenplay](#convert-story-to-screenplay)
+    - [Annotate Story Elements](#annotate-story-elements)
+    - [View Story Extraction and Representation Results](#view-story-extraction-and-representation-results)
+- [How to run the system](#how-to-run-the-system)
+  - [System Prerequisites](#system-prerequisites)
   - [Easy setup](#easy-setup)
     - [Unexpected behavior](#unexpected-behavior)
   - [Manual setup](#manual-setup)
     - [Set up the coreference resolution server](#set-up-the-coreference-resolution-server)
     - [Set up the main server](#set-up-the-main-server)
     - [Unexpected behavior](#unexpected-behavior-1)
+- [Research Overview](#research-overview)
+  - [Abstract](#abstract)
+  - [Research Document](#research-document)
 - [Coref API Documentation](#coref-api-documentation)
   - [Get coreference clusters](#get-coreference-clusters)
     - [`GET /api/coref-clusters`](#get-apicoref-clusters)
@@ -278,13 +286,44 @@ Advised by Ryan Austin Fernandez
       - [Parameters](#parameters-75)
       - [Returns](#returns-75)
 
-# Pre-requisites
+# System Overview
+
+A system for screenwriters to generate a first draft of a screenplay adaptation from a short story. 
+
+## System Features
+
+### Convert Story to Screenplay
+
+Convert a story to a screenplay in two simple steps:
+
+1. Provide the title, author, and the story .txt file.
+
+![Picture of Upload Page](https://drive.google.com/uc?export=view&id=1H9TktmQRLO4J3bojHn0cYMyeiSEYMWKt)
+
+2. View and download the screenplay.
+
+![Picture of Screenplay Page](https://drive.google.com/uc?export=view&id=1yihwrpFQSuoG6W40NZ7yszhjZoPJCB8o)
+
+### Annotate Story Elements
+
+For evaluation purposes, the system can be used to annotate story elements. 
+
+![Picture of Annotation Page](https://drive.google.com/uc?export=view&id=1SHVQwD105R9MnasIuMaLeiXz__zZHmOO)
+
+### View Story Extraction and Representation Results
+
+The story representation results can be viewed. Metrics on the left require the story to be annotated first.  
+
+![Picture of Results Page](https://drive.google.com/uc?export=view&id=1XaJJfBKt-H6YgzdzepftKsbft-H-Arnx)
+
+
+# How to run the system
+
+## System Prerequisites
 1. [Python 3.7.9](https://www.python.org/downloads/release/python-379/)
 2. [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html)
 3. TeX distribution software, preferably [TeX Live](http://www.tug.org/texlive/acquire-netinstall.html)
 4. [screenplay](https://www.ctan.org/pkg/screenplay) package for your chosen TeX distribution software 
-
-# How to run the project
 
 ## Easy setup
 
@@ -340,6 +379,16 @@ py manage.py migrate
 
 ### Unexpected behavior
 1. If an error occurs during the setup, please take a screenshot and contact the developers. Thank you.
+
+# Research Overview
+
+## Abstract
+
+A story is a series of events that can be represented in many ways. They are diverse and follow no strict format. The screenplay is a medium to tell stories clearly and straightforwardly. They focus on vital story elements that are ordered such that the story's meaning is retained. The conversion of stories into screenplays is currently time and human resource expensive due to the research and creativity needed to make a faithful adaptation. However, there are strategies in converting stories to screenplays that are repeatable for screenwriters. Thus, we created a system that automatically translates short stories into screenplays. Story elements were extracted and classified simultaneously and mapped to screenplay elements through abstract story representation. Of the story elements extracted, the system performed best with dialogue content and action lines, with precision, recall, and f1 scores above 60%. Readers were able to understand the screenplays across both corpora, performing with an above 60% similarity using Simple Matching Coefficient with story readers across all story elements.
+
+## Research Document
+
+The research document can be found [here](https://drive.google.com/file/d/1H7rBKoIqRntildEa-u5I1gcT1OebjSBp/view?usp=sharing). Please request access if prompted.
 
 # Coref API Documentation
 
