@@ -288,7 +288,11 @@
 
 # System Overview
 
-A system for screenwriters to generate a first draft of a screenplay adaptation from a short story. 
+- A system for screenwriters to generate a first draft of a screenplay adaptation from a short story
+- Extracts story elements from a short story text file using Natural Language Processing
+- Represents the story elements as abstract data structures
+- Generates a screenplay from the abstract story representation downloadable in PDF and TeX formats
+- Built using Django, SQLite, spaCy, and TeX Live
 
 ## System Features
 
