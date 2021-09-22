@@ -2,11 +2,10 @@
 
 ## Converting Short Stories Into Screenplays Through Abstract Story Representation
 
-<div style="font-size: 1.17em;">Thesis Proponents</div>
+<h3>Thesis Proponents</h3>
 
-| | | | | |
+| ![Picture of Nicole](https://github.com/Losinek.png?size=150) | ![Picture of Jude](https://github.com/jude842.png?size=150) | ![Picture of Carlos](https://github.com/carlosngo.png?size=150) | ![Picture of Shasha](https://github.com/ShashaVillaroman.png?size=150) | <img src="https://media.discordapp.net/attachments/674171433705799685/889074944154161152/unknown.png" alt="Picture of Austin" height="150"/> |
 | ----------- | ----------- | ----------- | ----------- | ----------- | 
-| <h3> ![Picture of Nicole](https://github.com/Losinek.png?size=150) </h3> | <h3> ![Picture of Jude](https://github.com/jude842.png?size=150) </h3> | <h3> ![Picture of Carlos](https://github.com/carlosngo.png?size=150) </h3> | <h3> ![Picture of Shasha](https://github.com/ShashaVillaroman.png?size=150) </h3> | <h3><img src="https://media.discordapp.net/attachments/674171433705799685/889074944154161152/unknown.png" alt="Picture of Austin" width="150"/> </h3> |
 | Garay, Kathleen Nicole | Kang, Jude Evander | Ngo, Carlos Miguel | Villaroman, Ma. Patricia | Fernandez, Ryan Austin |
 | Undergraduate Student | Undergraduate Student | Undergraduate Student | Undergraduate Student | Thesis Adviser |
 
